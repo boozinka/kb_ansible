@@ -4,17 +4,17 @@ This course dives into Ansible as applied to Network Engineering.
 
 ### Topics covered include:
 
-Class 1 - Ansible Fundamentals
-Class 2 - Variables, Modules, Network Fact Gathering
-Class 3 - Conditionals, Loops, and Configuration Templating
-Class 4 - Making Network Configuration Changes (Basics)
-Class 5 - Making Network Configuration Changes (Part2)
-Class 6 - Imports, Includes, and Roles
-Class 7 - Parsers and Dynamic Inventory
-Class 8 - Additional Ansible Techniques and Debugging
+- [ ] Class 1 - Ansible Fundamentals
+- [ ] Class 2 - Variables, Modules, Network Fact Gathering
+- [ ] Class 3 - Conditionals, Loops, and Configuration Templating
+- [ ] Class 4 - Making Network Configuration Changes (Basics)
+- [ ] Class 5 - Making Network Configuration Changes (Part2)
+- [ ] Class 6 - Imports, Includes, and Roles
+- [ ] Class 7 - Parsers and Dynamic Inventory
+- [ ] Class 8 - Additional Ansible Techniques and Debugging
 
-Bonus Class 1 - NAPALM-Ansible
-Bonus Class 2 - OS Upgrade IOS/IOS-XE, Creating your own Filter/Module
+- [ ] Bonus Class 1 - NAPALM-Ansible
+- [ ] Bonus Class 2 - OS Upgrade IOS/IOS-XE, Creating your own Filter/Module
 
 
 Class 1. Ansible Fundamentals
