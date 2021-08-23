@@ -1,0 +1,8 @@
+---
+router1:
+  host: lon-rtr1
+  username: boozinka
+  password: somepassword
+  device_type: cisco
+  use_session_log: False
+
