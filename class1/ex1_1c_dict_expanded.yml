@@ -6,3 +6,4 @@ router1:
   device_type: cisco
   use_session_log: False
 
+

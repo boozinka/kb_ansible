@@ -16,3 +16,4 @@
     - ansible.builtin.debug:
         var: ansible_host
  
+
