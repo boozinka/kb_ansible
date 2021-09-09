@@ -1,0 +1,24 @@
+---
+- name: Exercise 2.5 - Junos Command Module
+  hosts: juniper
+  gather_facts: False
+  tasks:
+    #- junipernetworks.junos.junos_facts:
+
+    - name: Issue "show interface terse" using command module
+      junipernetworks.junos.junos_command:
+        commands:
+          - show interfaces terse 
+      register: sh_int_ter
+
+    - name: Print "show interface terse" to stdout 
+      ansible.builtin.debug: 
+        var: sh_int_ter["stdout_lines"][0][21]
+
+    - name: Create new varible using set_fact for use in following debug
+      ansible.builtin.set_fact:
+        intf_line: "{{ sh_int_ter['stdout_lines'][0][21] }}"
+
+    - name: Print only the "172.30.0.x" from the previous var
+      ansible.builtin.debug: 
+        msg: "Primary IP: {{ intf_line.split()[-1] }}"

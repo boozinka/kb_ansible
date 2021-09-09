@@ -1,0 +1,24 @@
+---
+- name: Exercise 2.3 - NXOS Command Module
+  hosts: nxos 
+  gather_facts: False
+  tasks:
+    #- cisco.nxos.nxos_facts:
+
+    - name: Gather "show ver" using command module
+      cisco.nxos.nxos_command: 
+        commands:
+          - show version
+          - show lldp neighbors
+      register: output
+
+    - name: Print "show version" to stdout 
+      ansible.builtin.debug: 
+        # Three different formats to do the same thing
+        msg: "{{ output.stdout[0] }}"
+        #var: output["stdout"][0]
+        #var: output.stdout[0]
+
+    - name: Print "show lldp neighbors" to stdout 
+      ansible.builtin.debug: 
+        var: output["stdout"][1]

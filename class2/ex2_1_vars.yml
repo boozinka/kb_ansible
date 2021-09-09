@@ -1,0 +1,39 @@
+---
+- name: Exercise 2.1 - Modules and Fact Gatering 
+  hosts: arista5
+  gather_facts: False
+  vars_files:
+    - group_vars/my_vars.yml
+  tasks:
+    - name: Gather facts at a task level
+      arista.eos.eos_facts:
+      register: output
+
+    - name: All Ansible facts to stdout
+      ansible.builtin.debug: 
+        msg: "{{ output }}"
+
+    - name: All ipv4 addresses to stdout
+      ansible.builtin.debug: 
+        msg: "{{ ansible_net_all_ipv4_addresses }}"
+
+    - name: ansible_network_os inventory varible to stdout
+      ansible.builtin.debug:
+        var: ansible_network_os
+
+    - name: ansible_host inventory varible to stdout
+      ansible.builtin.debug:
+        var: ansible_host
+
+    - name: Print varible from group_vars/all.yml to stdout
+      ansible.builtin.debug:
+        var: desired_eos_version
+
+    - name: setting a fact inside the task
+      ansible.builtin.set_fact:
+        device_hostname: "{{ inventory_hostname }}.lab.io"
+
+    - name: Print "device_hostname" with suffix 
+      ansible.builtin.debug: 
+        var: device_hostname
+

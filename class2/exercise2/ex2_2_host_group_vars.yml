@@ -1,0 +1,10 @@
+---
+- name: Exercise 2.2 - Varibles, Modules and Fact Gatering 
+  hosts: cisco
+  gather_facts: False
+  tasks:
+
+    - name: All Ansible facts to stdout
+      ansible.builtin.debug: 
+        msg: "The ASN for host {{ inventory_hostname }} is {{ bgp_asn }}, the router-id is {{ bgp_router_id }}"
+

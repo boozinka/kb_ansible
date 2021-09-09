@@ -1,0 +1,13 @@
+---
+- name: Exercise 2.4 - Multiline Prompting
+  hosts: cisco6 
+  gather_facts: False
+  tasks:
+    #- cisco.ios.ios_facts:
+
+    - name: Clear logging buffer and handle confirmation prompt
+      cisco.ios.ios_command:
+        commands:
+          - command: clear logging
+            prompt: "confirm"
+            answer: "y"

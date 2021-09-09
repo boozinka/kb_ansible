@@ -1,0 +1,27 @@
+---
+- name: Exercise 2.6 - Arista eos JSON
+  hosts: arista
+  gather_facts: False
+  tasks:
+    #- name: Gather facts at a task level
+    #  arista.eos.eos_facts:
+
+    - name: Issue the "show ip arp" command and register the varible
+      arista.eos.eos_command:
+        commands:
+          - sh ip arp
+      register: sh_ip_arp
+
+    - name: Print the varible "sh_ip_arp"
+      ansible.builtin.debug: 
+        var: sh_ip_arp
+
+    - name: Issue the "show ip arp" command and register the varible
+      arista.eos.eos_command:
+        commands:
+          - sh ip arp | json
+      register: sh_ip_arp_json
+
+    - name: Print the varible "sh_ip_arp_json"
+      ansible.builtin.debug: 
+        var: sh_ip_arp_json
