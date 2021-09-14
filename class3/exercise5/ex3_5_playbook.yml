@@ -1,0 +1,16 @@
+---
+- name: Exercise 3.5 - Pulling in varibles and assembling config parts
+  hosts: nxos
+  gather_facts: False
+  vars_files:
+    - group_vars/nxos/bgp.yml
+  tasks:
+    - name: Create BGP Configuration File
+      ansible.builtin.template:
+        src: ex3_5_nxos_bgp.j2
+        dest: "configs/{{ inventory_hostname }}_bgp.txt"
+
+    - name: Create Interface Configuration File
+      ansible.builtin.template:
+        src: ex3_5_nxos_interfaces.j2
+        dest: "configs/{{ inventory_hostname }}_intf.txt"

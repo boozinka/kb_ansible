@@ -1,0 +1,11 @@
+---
+- name: Exercise 3.4 - Jinja2 Varibles and Loops
+  hosts: arista
+  gather_facts: False
+  vars_files:
+    - group_vars/all.yml
+  tasks:
+    - template:
+        src: ex3_4_arista_template.j2
+        dest: "configs/{{ inventory_hostname }}.txt"
+

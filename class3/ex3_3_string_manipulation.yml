@@ -1,0 +1,36 @@
+---
+- name: Exercise 3.3 - String Manipulation
+  hosts: cisco1:cisco2
+  gather_facts: False
+  tasks:
+
+    - name: Extract "show lldp nei" for cisco1 and 2
+      cisco.ios.ios_command:
+        commands:
+          - sh lldp neighbors
+      register: sh_lldp_nei
+
+    - name: Create new varible containing only the "stdout_lines[0]"
+      ansible.builtin.set_fact:
+        lldp_stdout_lines: "{{ sh_lldp_nei['stdout_lines'][0] }}"
+
+    - name: Loop over "lldp_stdout_lines" extracting line with "twb-sf-hpsw1" as list
+      ansible.builtin.set_fact:
+        lldp_entry: "{{ item.split() }}"
+      loop: "{{ lldp_stdout_lines }}"
+      when: "'twb-sf-hpsw1' in item"
+
+    - name: Create new varible for "remote_device", "local_intf" and "remote_intf"
+      ansible.builtin.set_fact:
+        remote_dev: "{{ lldp_entry[0] }}"
+        local_intf: "{{ lldp_entry[1] }}"
+        remote_intf: "{{ lldp_entry[4] }}"
+
+    - name: Print all three varibles to std_out
+      ansible.builtin.debug:
+         msg: 
+           - "Remote device: {{ remote_dev }}"
+           - "Local intf: {{ local_intf }}"
+           - "Remote intf: {{ remote_intf }}"
+
+
