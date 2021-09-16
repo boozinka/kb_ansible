@@ -8,9 +8,16 @@
     - name: Create BGP Configuration File
       ansible.builtin.template:
         src: ex3_5_nxos_bgp.j2
-        dest: "configs/{{ inventory_hostname }}_bgp.txt"
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/02-{{ inventory_hostname }}-bgp.txt"
 
     - name: Create Interface Configuration File
       ansible.builtin.template:
         src: ex3_5_nxos_interfaces.j2
-        dest: "configs/{{ inventory_hostname }}_intf.txt"
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/01-{{ inventory_hostname }}-intf.txt"
+
+    - name: Combine/assemble previously generated files into one file
+      ansible.builtin.assemble:
+        src: "./configs/{{ inventory_hostname }}/"
+        dest: "./configs/{{ inventory_hostname }}-final-config.txt"
