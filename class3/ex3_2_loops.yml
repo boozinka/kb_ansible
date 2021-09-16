@@ -19,4 +19,4 @@
       ansible.builtin.debug:
         var: vlans['results'][3]['stdout_lines']
 
-
+ 
