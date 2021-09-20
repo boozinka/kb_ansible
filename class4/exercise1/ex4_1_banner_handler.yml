@@ -1,0 +1,26 @@
+---
+- name: Exercise 4.1- Configure IOS login banner and notify Handler
+  hosts: cisco
+  gather_facts: False
+  tasks:
+    - name: Configure login banner on Cisco IOS
+      cisco.ios.ios_banner:
+        banner: login
+        text: |
+          ***********************************************
+          Configuring an IOS login banner via Ansible
+
+          Class4, Exercise 1 ...assimilation commencing
+          ***********************************************
+        state: present
+      notify:
+        - write mem
+ 
+  handlers:
+    # Saves configuration, only if previous task completes
+    - name: write mem
+      cisco.ios.ios_command:
+        commands:
+          - write mem
+      changed_when: True
+

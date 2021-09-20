@@ -1,0 +1,15 @@
+---
+- name: Exercise 4.2 - ios_system module and idempotency
+  hosts: cisco1
+  gather_facts: False
+  vars_files:
+    - group_vars/all.yml
+  tasks:
+    - name: Configure hostname and domain nameS
+      cisco.ios.ios_system:
+        hostname: "{{ hostname }}"
+        domain_name: "{{ domain_name }}"
+        name_servers:
+          - "{{ name_server1 }}"
+          - "{{ name_server2 }}"
+

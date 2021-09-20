@@ -1,0 +1,5 @@
+---
+intf_name: Ethernet7
+vlan_id: "211"
+vlan_name: EX4-4_VLAN211
+

@@ -1,0 +1,45 @@
+---
+- name: Exercise 4.4 - eos_vlans and eos_l2_interfaces modules 
+  hosts: arista
+  gather_facts: False
+  tasks:
+    - name: Configure a VLAN on all four Arista switches 
+      arista.eos.eos_vlans:
+        config:
+          - vlan_id: "{{ vlan_id }}"
+            name: "{{ vlan_name }}" 
+        state: merged
+
+    - name: Assign previously created vlan to an interface
+      arista.eos.eos_l2_interfaces:
+        config:
+          - name: "{{ intf_name }}" 
+            mode: access
+            access:
+              vlan: "{{ vlan_id }}"
+        state: merged 
+
+    - name: Issue "show vlan" to retrieve vlan state/configuration
+      arista.eos.eos_command:
+        commands:
+          - command: show vlan
+            output: json
+      register: sh_vlan_out
+    
+    - name: Create new varible with only vlans based on "sh_vlan_out"
+      ansible.builtin.set_fact:
+        my_vlans: "{{ sh_vlan_out.stdout[0].vlans }}"
+        my_vlan_intf: "{{ sh_vlan_out.stdout[0].vlans[vlan_id].interfaces }}"
+
+    - name: Verify the vlan exists and the choosen interface was assigned
+      ansible.builtin.assert:
+        that:
+          - "'211' in my_vlans"
+          - "'Ethernet7' in my_vlan_intf"
+        success_msg: "vlan {{ vlan_id }} exists & {{ intf_name }} is assigned"
+        fail_msg: "This configuration attempt failed"
+
+    - name: Prints the output from the "show vlan" task
+      ansible.builtin.debug:
+        var: my_vlans["211"]
+

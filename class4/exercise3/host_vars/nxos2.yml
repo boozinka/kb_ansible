@@ -1,0 +1,6 @@
+---
+intf_name: Ethernet1/4
+eth1_4_ip_addr: 10.227.11.2
+eth1_4_netmask: 24
+ping_destination: 10.227.11.1
+

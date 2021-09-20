@@ -1,0 +1,30 @@
+---
+- name: Exercise 4.3 - nxos_l3_interfaces module
+  hosts: nxos
+  gather_facts: False
+  tasks:
+    - name: Configure Ethernet1/4 on both nxos devices
+      cisco.nxos.nxos_l3_interfaces:
+        config:
+          - name: "{{ intf_name }}" 
+            ipv4:
+              - address: "{{ eth1_4_ip_addr }}/{{ eth1_4_netmask }}"
+        state: merged
+
+    - name: Test connectivity between both interfaces using "net_ping"
+      ansible.netcommon.net_ping:
+        dest: "{{ ping_destination }}" 
+      register: my_ping
+
+    - name: Verify the ping worked correctly using the "assert" module    
+      ansible.builtin.assert:
+        that:
+          - my_ping.packets_rx >= 4
+        success_msg: "80% or more packets returned"
+        fail_msg: "20% or more of the packets failed"
+
+    - name: Only prints out the number of packets if assert conditions pass
+      ansible.builtin.debug:
+       msg: "The number of successfull packets are: {{ my_ping.packets_rx }}"
+
+ 

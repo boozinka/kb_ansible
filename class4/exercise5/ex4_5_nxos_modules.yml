@@ -1,0 +1,53 @@
+---
+- name: Exercise 4.5 - nxos_interfaces, nxos_l2_interface and nxos_l2_interfaces modules
+  hosts: nxos 
+  gather_facts: False
+  vars_files:
+    - group_vars/nxos.yml
+  tasks:
+    - name: Configure eth1/3 as a Layer2
+      cisco.nxos.nxos_interfaces:
+        config:
+          - name: "{{ intf_name }}" 
+            mode: "{{ intf_type }}"
+        state: merged
+
+    - name: Configure eth1/3 as "switchport mode trunk" (deprecated 22-06-01)
+      cisco.nxos.nxos_l2_interface:
+        name: "{{ intf_name }}" 
+        mode: "{{ switchport_mode }}"
+        state: present
+
+    - name: Configure trunk native vlan to 4
+      cisco.nxos.nxos_l2_interfaces:
+        config:
+          - name: "{{ intf_name }}" 
+            trunk:
+              native_vlan: "{{ native_vlan }}" 
+        state: merged 
+
+    - name: Issue "show interface eth1/3 trunk | json" to retrieve interface state
+      cisco.nxos.nxos_command:
+        commands:
+          - command: "show interface {{ intf_name }} trunk"
+            output: json
+      register: sh_intf
+      tags: show
+
+    - name: Create new varible with only interface attributes
+      ansible.builtin.set_fact:
+        my_intf_attr: "{{ sh_intf.stdout[0].TABLE_interface.ROW_interface }}"
+
+    - name: Verify the interface status and the native vlan is "4"
+      ansible.builtin.assert:
+        that:
+          - my_intf_attr.native == "{{ native_vlan }}"
+          - my_intf_attr.status == "trunking"
+        success_msg: "native vlan {{ native_vlan }} & intf status {{ my_intf_attr.status }}"
+        fail_msg: "This configuration attempt failed"
+
+    - name: Prints the output from the "show interface eth1/3 trunk | json" task
+      ansible.builtin.debug:
+        var: my_intf_attr
+
+
