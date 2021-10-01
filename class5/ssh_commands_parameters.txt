@@ -1,0 +1,21 @@
+Straight SSH specifying which SSH key to use
+---------------------------------------------
+ssh -i ~/.ssh/student_key student1@cisco1.lasthop.io
+
+
+Running a playbook and specifying which ansible-hosts.ini file to use
+----------------------------------------------------------------------
+ansible-playbook my_playbook.yml  -i ./ansible-hosts.ini
+
+
+Specifying your SSH key in the ansible-host.ini file
+------------------------------------------------------
+[cisco vars]
+ansible_ssh_private_key_file="~/.ssh/student_key"
+
+
+Using SSH keys from the command line
+-------------------------------------
+ansible-playbook my_playbook.yml -i ./ansible-hosts.ini --private-key ~/.ssh/student_key
+
+

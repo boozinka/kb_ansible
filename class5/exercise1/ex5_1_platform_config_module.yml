@@ -1,0 +1,64 @@
+---
+- name: Exercise 5.1 - Configure all devices, using ios/eos/nxos and junos_config modules
+  hosts: cisco:arista:nxos:juniper
+  gather_facts: True
+  vars_files:
+    - group_vars/dns.yml
+  tasks:
+    - name: Configure DNS on Cisco IOS 
+      cisco.ios.ios_config:
+        lines:
+          - "ip domain name {{ domain_name }}"
+          - "ntp server {{ ntp_server1 }}"
+          - "ntp server {{ ntp_server2 }}"
+          - "ip name-server {{ dns_server1 }}"
+          - "ip name-server {{ dns_server2 }}"
+        save_when: changed
+      when: ansible_facts.net_iostype is defined and
+            ansible_facts.net_iostype == "IOS"
+
+    - name: Configure DNS on Cisco IOS-XE
+      cisco.ios.ios_config:
+        lines:
+          - "ip domain name {{ domain_name }}"
+          - "ntp server {{ ntp_server1 }}"
+          - "ntp server {{ ntp_server2 }}"
+          - "ip name-server {{ dns_server1 }} {{ dns_server2 }}"
+        save_when: changed
+      when: ansible_facts.net_iostype is defined and 
+            ansible_facts.net_iostype == "IOS-XE"
+
+    - name: Configure DNS on Arista EOS
+      arista.eos.eos_config:
+        lines:
+          - "ip domain-name {{ domain_name }}"
+          - "ntp server {{ ntp_server1 }}"
+          - "ntp server {{ ntp_server2 }}"
+          - "ip name-server {{ dns_server1 }}"
+          - "ip name-server {{ dns_server2 }}"
+        save_when: changed
+      when: ansible_network_os == "eos"
+      tags: eos
+
+    - name: Configure DNS on Cisco NXOS 
+      cisco.nxos.nxos_config:
+        lines:
+          - "ip domain-name {{ domain_name }}"
+          - "ntp server {{ ntp_server1 }} use-vrf management"
+          - "ntp server {{ ntp_server2 }} use-vrf management"
+          - "ip name-server {{ dns_server1 }} {{ dns_server2 }}"
+        save_when: changed
+      when: ansible_network_os == "nxos"
+      tags: nxos
+
+    - name: Configure DNS on Juniper JUNOS
+      junipernetworks.junos.junos_config:
+        lines:
+          - "set system domain-name {{ domain_name }}"
+          - "set system ntp server {{ ntp_server1 }}"
+          - "set system ntp server {{ ntp_server2 }}"
+          - "set system name-server {{ dns_server1 }}"
+          - "set system name-server {{ dns_server2 }}"
+      when: ansible_network_os == "junos"
+      tags: junos
+

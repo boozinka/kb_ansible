@@ -1,0 +1,26 @@
+---
+- name: Exercise 5.5 - Use SSH key authentication and perform 'show users'.
+  hosts: cisco1:cisco2
+  gather_facts: False
+  tasks:
+    - name: Issue 'show users' command and register varible
+      cisco.ios.ios_command:
+        commands: show users
+      register: sh_users
+
+    - name: Create new varible using 'set_fact'
+      ansible.builtin.set_fact:
+        my_user: "{{ sh_users.stdout_lines[0][1].split() }}"
+
+    - name: Use Assert to verify 'student1' is connected 
+      ansible.builtin.assert: 
+        that:
+           - my_user[4] == "student1"
+        success_msg: "student1 authenticated via ssh keys successfully"
+        fail_msg: "student1 was not able to authenticate via ssh keys"
+
+    - name: Print output from the 'show users' command
+      ansible.builtin.debug:
+        msg: "The user connected to {{ inventory_hostname }} is {{ my_user[4] }}"
+
+

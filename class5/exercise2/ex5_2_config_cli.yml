@@ -1,0 +1,20 @@
+---
+- name: Exercise 5.2 - Configure all devices, using cli_config
+  hosts: cisco:arista:nxos:juniper
+  gather_facts: True
+  tasks:
+    - name: Global configuration
+      ansible.builtin.set_fact:
+        config: "{{ lookup('template', 'templates/{{ ansible_network_os }}/cfg_template.j2') }}"
+
+    - name: View the generated configuration
+      ansible.builtin.debug:
+        var: config.splitlines()
+
+    - name: Configure Cisco, Arista, Nexus and Juniper devices
+      vars:
+        # cli_config requires 'network_cli' (Juniper defaults to 'netconf' in inventory)
+        ansible_connection: network_cli
+      ansible.netcommon.cli_config:
+        config: "{{ config }}"
+
