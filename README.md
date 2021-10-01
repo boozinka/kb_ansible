@@ -521,3 +521,280 @@ Using the nxos_command module execute a show command on the switches and capture
 
 The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should NOT be hard-coded into your Ansible playbook.
 
+
+Class 5. Making Network Configuration Changes (Part2)
+
+- [ ] I.    Introduction to platform_config Modules
+- [ ] II.   ios_config
+- [ ] III.  ios_config diff
+- [ ] IV.   nxos_config and junos_config
+- [ ] V.    Using cli_config
+- [ ] VI.   Config Hierarchy and platform_config
+- [ ] VII.  Deploying Jinja2 Generated Configurations
+- [ ] VIII. SSH Key Authentication
+- [ ] IX.   Module Path
+- [ ] X.    Collections*
+
+
+Exercises:
+-----------
+
+1. Configure the following items on all of the lab network devices (4 x Cisco IOS/IOS-XE devices, 4 x Arista devices, 2 x NX-OS devices, and 2 x Juniper vMX devices): 
+
+---
+ntp_server1: 130.126.24.24
+ntp_server2: 152.2.21.1
+domain_name: bogus.com
+dns_server1: 8.8.8.8
+dns_server2: 8.8.4.4
+
+The above variables should all be stored in group_vars or host_vars. You can use the following templates as a reference for the particular CLI syntax for each platform.
+
+Configuration templates
+
+Your playbook should be idempotent for all the devices. Additionally, you should use the ios_config, eos_config, nxos_config, and junos_config modules to accomplish this task.
+
+
+2. Repeat exercise1 except now use the "cli_config" module for all of the devices (instead of ios_config, eos_config, nxos_config, and junos_config). Once again your final playbook should be idempotent.
+
+Note, I had to specify "ansible_connection: network_cli" for the Juniper vMXs as the cli_config module requires network_cli.
+
+
+3a. Using the ios_config module and the configuration hierarchy arguments (for exampe: parents, before, match, replace) configure a ten-line access-list on the cisco5 and cisco6 devices. Here is an example ACL you could use: 
+
+ip access-list extended TEST-ANSIBLE1
+ permit ip host 10.1.1.1 any
+ permit ip host 10.1.1.2 any
+ permit ip host 10.1.1.3 any
+ permit ip host 10.1.1.4 any
+ permit ip host 10.1.1.5 any
+ permit ip host 10.1.1.6 any
+ permit ip host 10.1.1.7 any
+ permit ip host 10.1.1.8 any
+ permit ip host 10.1.1.9 any
+ permit ip host 10.1.1.10 any
+
+Use the ios_command module to verify that the ACL is configured (basically execute: "show access-list <ACL-NAME>" and then use the debug module to print out the ACL).
+
+Your playbook should be idempotent.
+
+
+3b. Re-order your access-list such that one of the last three access-list lines is now at the beginning. Additionally convert this moved ACL entry from being a "permit" statement to being a "deny" statement. Ensure that executing your new playbook results in the correct final access-list being configured. For example, my new access-list would look as follows: 
+
+ip access-list extended TEST-ANSIBLE1
+ deny   ip host 10.1.1.9 any
+ permit ip host 10.1.1.1 any
+ permit ip host 10.1.1.2 any
+ permit ip host 10.1.1.3 any
+ permit ip host 10.1.1.4 any
+ permit ip host 10.1.1.5 any
+ permit ip host 10.1.1.6 any
+ permit ip host 10.1.1.7 any
+ permit ip host 10.1.1.8 any
+ permit ip host 10.1.1.10 any
+
+Once again use the "ios_command" module and the "debug" module to verify that your updated ACL is properly configured.
+
+Your playbook should be idempotent.
+
+
+4. Using the configurations generated from class3-exercise5 configure both BGP and the relevant interface on both nxos1 and nxos2.
+
+In other words, class3-exercise5 was an exercise where we used Jinja2 to generate both BGP and interface configurations for nxos1 and nxos2, BUT we did not deploy those configurations. Now you should use nxos_config module to deploy those configurations.
+
+Verify the BGP session reached the established using the nxos_command module. For this verification task, you can simply execute "show ip bgp summary" using nxos_command and visually verify its output using the "debug" module.
+
+
+5. Using an SSH key for authentication, execute the "show users" command on both cisco1 and cisco2. You should use the ios_command module to accomplish this. Remember for this exercise that you will need to use the SSH key located here:
+
+ansible_ssh_private_key_file="~/.ssh/student_key"
+
+Additionally, you will need to switch the "ansible_user" to "student1".
+
+
+Using the "assert" module, verify that "student1" is present in the output of "show users". This will help verify that you are properly using the SSH key and not accidentally connecting using the "pyclass" username/password.
+
+
+
+Class 6. Imports, Includes, and Roles
+
+
+ - [ ] I.    Dynamic (include) vs Static (import)
+ - [ ] II.   Import-Include and Tags
+ - [ ] III.  Import-Include and Conditionals
+ - [ ] IV.   Dynamic or Static - Which should you use?
+ - [ ] V.    include_tasks and import_tasks
+ - [ ] VI.   include_vars
+ - [ ] VII.  Roles
+ - [ ] VIII. Roles (Part2)
+ - [ ] IX.   Playbook Composition
+
+
+Errata / Clarification:
+------------------------
+
+Expanding on the Ansible tag behavior when using import_tasks or include_tasks
+
+In the videos, I talked a lot about having tags directly associated with the import_tasks or include_tasks statements in the main playbook. But I didn't sufficiently discuss the behavior of import_tasks and include_tags when there are no tags in the main playbook and all of the tags are in the subtask file (or potentially embedded in a role).
+
+For example, consider these two sub-tasks: 
+
+	# file named subtask1.yml
+	- debug:
+	    msg: "Hello1"
+	  tags: test1
+	
+	- debug:
+	    msg: "Hello2"
+	  tags: test2
+
+If I execute these sub-tasks using the following playbook and without using any tags... 
+
+	---
+	- name: Testing
+	  hosts: local
+	  tasks:
+	    - name: Test tags
+	      import_tasks: subtask1.yml
+	      
+then you get the output you would expect (i.e. all of the sub-tasks properly execute).
+
+
+But what happens when you do: 
+
+	$ ansible-playbook test1.yml --tags test1
+
+In this case, the import_tasks statement is completely transparently to the tag being applied on playbook execution. Or worded differently, it is like the "import_tasks" statement doesn't exist and we just "statically" have the sub-tasks in our main playbook. Consequently, the sub-tasks will execute or not execute based on the tags that these sub-tasks themselves possess. 
+
+Thus we see the output as follows: 
+
+	$ ansible-playbook test1.yml --tags test1
+	
+	PLAY [Testing] ******************************
+	
+	TASK [Gathering Facts] **********************
+	ok: [localhost]
+	
+	TASK [debug] ********************************
+	ok: [localhost] => {
+	    "msg": "Hello1"
+	}
+	
+	PLAY RECAP **********************************
+	localhost : ok=2 changed=0 ...   
+
+The subtask with the "test1" tag was executed and its message displayed to the screen (i.e. "Hello1")
+
+
+Now what happens when we convert this over to "include_tasks"? 
+
+	---
+	- name: Testing
+	  hosts: local
+	  tasks:
+	    - name: Test tags
+	      include_tasks: subtask1.yml
+
+In this case the "include_tasks" statement is dynamic and the entire "Test tags" task is included or excluded based on whether we possess the tag or not. Consequently, if we execute our playbook as below, then the "include_tasks" statement in the main playbook will not execute (as it does NOT have the "test1" tag). In other words, the entire include_tasks operation will be skipped including all of the sub-tasks. 
+
+
+	$ ansible-playbook test1.yml --tags test1
+	
+	PLAY [Testing] *****************************************
+	
+	TASK [Gathering Facts] *********************************
+	ok: [localhost]
+	
+	PLAY RECAP *********************************************
+	localhost                  : ok=1    changed=0  ...
+
+Here "Gathering Facts" is executed, but nothing else.
+
+How do we fix this? In other words, we have tags embedded in our playbook structure, how do we convince Ansible to drill down deeper and to not skip them (when using "include_tasks")? The easy answer is to add the "always" tag to your "include_tasks" statement. For example: 
+
+	---
+	- name: Testing
+	  hosts: local
+	  tasks:
+	    - name: Test tags
+	      include_tasks: subtask1.yml
+	      tags: always
+
+This "always" tag will tell ansible to always execute this task regardless of the tags you pass in at playbook execution (unless you intentionally skip it using "--skip-tags always").
+
+Re-executing our playbook with the "always" tag applied to the "include_tasks" operation thus yields: 
+
+	$ ansible-playbook test1.yml --tags test1
+	
+	PLAY [Testing] ******************************************
+	
+	TASK [Gathering Facts] **********************************
+	ok: [localhost]
+	
+	TASK [Test tags] ****************************************
+	included: /home/student5/EP/test1/subtask1.yml for localhost
+	
+	TASK [debug] ********************************************
+	ok: [localhost] => {
+	    "msg": "Hello1"
+	}
+	
+	PLAY RECAP **********************************************
+	localhost                  : ok=3    changed=0 ...
+
+You can see in the output that the debug task with the "test1" tag did in fact execute.
+
+
+Exercises:
+-----------
+
+1a. Create a playbook that runs against localhost. In this playbook, create a task that uses "include_tasks" and loads in an external sub-tasks file named "subtask1.yml". The task in the main playbook should have a loop that loops over four IP addresses. The sub-tasks file should have a "debug" task that prints out the IP address.
+
+1b. Add the name of your sub-tasks file into "host_vars/localhost.yml". Convert your "include_tasks" statement in your main playbook to use the variable defined in host_vars. The rest of the task and sub-task should remain the same (i.e. looping over four IP addresses and printing them out).
+
+1c. Create a file named "subtask2.yml" that has three "debug" tasks. These debug tasks should each print out slightly different messages. Additionally, these three sub-tasks should each have their own "tag" associated with them. Create a new main playbook that uses "include_tasks" to execute the tasks in "subtask2.yml". No loop is necessary in this exercise. What happens if you execute your playbook and pass in one of the "tags" defined in "subtask2.yml". Does the sub-task actually execute? Why not? At this point, it is assumed that the main playbook has no tags defined in it.
+
+While still using "include_tasks", how could you correct the main playbook such that the proper sub-task would execute if you use the sub-tasks corresponding "tag"? For reference, see the "Expanding on the Ansible tag behavior when using import_tasks or include_tasks" section in this email.
+
+
+2a. Convert exercise1a over to use "import_tasks" instead of "include_tasks". Where do you need to relocate the loop for proper execution?
+
+2b. Try to convert exercise1b over to "import_tasks" instead of "include_tasks" while using a variable from inventory. Will you be able to do this? Why not? How could you use a variable for the file name while still using "import_tasks"? Hint, what are some other variable locations besides inventory where you could define the sub-tasks file name?
+
+2c. Convert exercise1c over to use "import_tasks" instead of "include_tasks". If no tags are defined in the main playbook (i.e. on the "import_tasks" task), then what happens upon ansible-playbook execution (in other words, you pass in a "tag" via ansible-playbook and that tag only exists in the sub-task file)? Does the sub-task execute or not? Why does the sub-task execute (note, see the "Errata/Clarification section earlier in this email").
+
+
+3. Use import_tasks and an Ansible conditional to load an external task file that configures the Cisco IOS devices for DNS, NTP, and for a domain-name. Use a second import_tasks statement and a conditional to configure the same thing for the Cisco IOS-XE devices. Both configurations should use the "ios_config" module and should be idempotent.
+
+
+4. Construct a playbook that executes against the Arista, Cisco IOS/IOS-XE, and Cisco NX-OS lab devices. The playbook should consist of a single Ansible play. The tasks for each platform should configure the global parameters (DNS servers, NTP servers, and domain-name). The actual configuration tasks for each platform should be imported/included from an external task file per platform.
+
+You should make a distinction between Cisco IOS and IOS-XE since there are slight syntactical differences for their DNS configurations. Your top level playbook should also have tags corresponding to "ios", "ios-xe", "eos", and "nxos" such that you could execute your playbook with that tag and only configure that platform (yes there are other ways you could do this using --limit given our current inventory structure, but with a different inventory structures you might be forced into tags).
+
+Make sure your playbook works properly with no tags (i.e. all of the platforms are configured).
+
+Make sure your playbook works properly using tags (i.e. only that platform is configured).
+
+
+5. Create an Ansible role that configures NTP on the IOS, IOS-XE, Arista, and NX-OS devices. The Ansible role should use "ios_config", "eos_config", and "nxos_config" to accomplish this. In each case, an external Jinja2 template should be used (in other words, the "src" argument to ios_config/eos_config/nxos_config should be used). All of the configuration tasks for this role should be located in "tasks/main.yml". All of the variables and Jinja2 templates should be included in the role.
+
+
+6. Create an Ansible role that configures VRF-lite on the cisco5 and cisco6 devices (see the reference configuration below). This same configuration should be deployed to both routers. You should make variables out of the VRF names, route distinguishers, and VRF-interfaces (i.e. the interface a given VRF is assigned to). All the elements used to accomplish this configuration should be included in the role (tasks, variables, templates). 
+
+--------
+ip vrf blue
+ rd 65000:1
+!
+ip vrf red
+ rd 65000:2
+!
+interface Loopback98
+ ip vrf forwarding blue
+!
+interface Loopback99
+ ip vrf forwarding red
+--------
+
+
+
+
