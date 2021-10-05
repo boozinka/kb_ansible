@@ -1,0 +1,16 @@
+---
+- name: Print message 1.
+  ansible.builtin.debug:
+    msg: "Exercise6.1c Message 1."
+  tags: msg1
+
+- name: Print message 2.
+  ansible.builtin.debug:
+    msg: "Exercise6.1c Message 2."
+  tags: msg2
+
+- name: Print message 3.
+  ansible.builtin.debug:
+    msg: "Exercise6.1c Message 3."
+  tags: msg3
+

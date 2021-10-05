@@ -1,0 +1,7 @@
+---
+- name: Exercise 6.2a - Use 'import_task' to print each item in subtask loop
+  hosts: local
+  gather_facts: False
+  tasks:
+    - name: Runtime import
+      ansible.builtin.import_tasks: subtask1.yml

@@ -1,0 +1,9 @@
+- name: Configure DNS on Cisco IOS 
+  cisco.ios.ios_config:
+    lines:
+      - ip name-server 130.126.24.24
+      - ip name-server 152.2.21.1
+      - ip domain name bogus.com
+      - ntp server 8.8.8.8
+      - ntp server 8.8.8.8 
+

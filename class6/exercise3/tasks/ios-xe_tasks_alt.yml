@@ -1,0 +1,4 @@
+- name: Configure DNS on Cisco IOS-XE (alternative method, not idempotent for IOS-XE)
+  cisco.ios.ios_config:
+    src: templates/ios-xe_cfg.j2
+

@@ -1,0 +1,5 @@
+---
+- name: Print each item in the main task loop
+  ansible.builtin.debug:
+    msg: "Varible in loop: {{ item }}"
+

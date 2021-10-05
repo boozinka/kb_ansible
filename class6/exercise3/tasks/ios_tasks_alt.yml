@@ -1,0 +1,4 @@
+- name: Configure DNS on Cisco IOS (alternative method)
+  cisco.ios.ios_config:
+    src: templates/ios_cfg.j2
+

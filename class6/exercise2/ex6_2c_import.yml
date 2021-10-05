@@ -1,0 +1,8 @@
+---
+- name: Exercise 6.2c - Use 'import_task' to print three messages with tags
+  hosts: local
+  gather_facts: False
+  tasks:
+    - name: Runtime import
+      ansible.builtin.import_tasks: subtask2.yml
+

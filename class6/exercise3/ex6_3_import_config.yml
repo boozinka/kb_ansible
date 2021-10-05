@@ -1,0 +1,22 @@
+---
+- name: Exercise 6.3 - Use 'import_task' to config devices with conditional statement
+  hosts: cisco
+  gather_facts: True 
+  tasks:
+    #- name: Alternative method
+    #  ansible.builtin.import_tasks: tasks/ios_tasks_alt.yml
+    #  when:  ansible_facts.net_iostype == "IOS"
+
+    - name: Import task to configure IOS based on conditional
+      ansible.builtin.import_tasks: tasks/ios_tasks.yml
+      when:  ansible_facts.net_iostype == "IOS"
+
+    #- name: Alternative method (not idempotent for ios-xe)
+    #  ansible.builtin.import_tasks: tasks/ios-xe_tasks_alt.yml
+    #  when:  ansible_facts.net_iostype == "IOS-XE"
+
+
+    - name: Import task to configure IOS-XE based on conditional
+      ansible.builtin.import_tasks: tasks/ios-xe_tasks.yml
+      when:  ansible_facts.net_iostype == "IOS-XE"
+
