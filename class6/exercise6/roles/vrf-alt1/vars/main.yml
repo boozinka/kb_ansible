@@ -1,0 +1,11 @@
+---
+vrfs_list:
+  - vrf_name: blue
+    rd_num: "65000:1"
+    interfaces:
+      - loopback98
+  - vrf_name: red
+    rd_num: "65000:2"
+    interfaces:
+      - loopback99
+

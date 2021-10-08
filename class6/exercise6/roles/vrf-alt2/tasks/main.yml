@@ -1,0 +1,14 @@
+- name: Render Jinja template into a config and assign to a varible
+  ansible.builtin.set_fact:
+    vrf_config: "{{ lookup('template', 'default_vrf.j2') }}"
+  tags: debugging
+
+- name: Print 'vrf_config' to stdout
+  ansible.builtin.debug:
+    msg: "{{ vrf_config.splitlines() }}"
+  tags: debugging
+
+- name: Configure VRF-Lite on Cisco devices
+  cisco.ios.ios_config:
+    src: default_vrf.j2
+

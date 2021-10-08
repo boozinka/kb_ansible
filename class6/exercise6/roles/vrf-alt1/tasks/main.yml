@@ -1,0 +1,5 @@
+- name: Configure VRF-Lite on Cisco devices
+  cisco.ios.ios_config:
+    src: default_vrf.j2
+  when:  'ansible_network_os == "ios"'
+

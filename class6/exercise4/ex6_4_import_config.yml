@@ -1,0 +1,31 @@
+---
+- name: Exercise 6.4 - Use 'import_task' to config devices
+  hosts: cisco:arista:nxos
+  gather_facts: True 
+  tasks:
+    - name: Import task to configure IOS based on conditional
+      ansible.builtin.import_tasks: tasks/ios_tasks.yml
+      when: ansible_facts.net_iostype is defined and
+            ansible_facts.net_iostype == "IOS"
+      tags:
+        - ios
+
+    - name: Import task to configure IOS-XE based on conditional
+      ansible.builtin.import_tasks: tasks/ios-xe_tasks.yml
+      when:  ansible_facts.net_iostype is defined and
+             ansible_facts.net_iostype == "IOS-XE"
+      tags:
+         - ios-xe
+
+    - name: Import task to configure EOS based on conditional
+      ansible.builtin.import_tasks: tasks/eos_tasks.yml
+      when:  'ansible_network_os == "eos"'
+      tags:
+         - eos
+
+    - name: Import task to configure NXOS based on conditional
+      ansible.builtin.import_tasks: tasks/nxos_tasks.yml
+      when:  'ansible_network_os == "nxos"'
+      tags:
+         - nxos
+

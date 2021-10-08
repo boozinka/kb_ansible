@@ -1,0 +1,7 @@
+---
+- name: Exercise 6.5 - Use 'roles' to config devices
+  hosts: cisco:arista:nxos
+  gather_facts: False
+  roles:
+    - ex5
+

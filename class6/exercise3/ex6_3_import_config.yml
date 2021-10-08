@@ -15,7 +15,6 @@
     #  ansible.builtin.import_tasks: tasks/ios-xe_tasks_alt.yml
     #  when:  ansible_facts.net_iostype == "IOS-XE"
 
-
     - name: Import task to configure IOS-XE based on conditional
       ansible.builtin.import_tasks: tasks/ios-xe_tasks.yml
       when:  ansible_facts.net_iostype == "IOS-XE"

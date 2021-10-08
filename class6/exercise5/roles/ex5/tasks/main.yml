@@ -1,0 +1,15 @@
+- name: Configure NTP on Cisco IOS and IOS-XE
+  cisco.ios.ios_config:
+    src: default_cfg.j2
+  when:  'ansible_network_os == "ios"'
+ 
+- name: Configure NTP on Arista EOS
+  arista.eos.eos_config:
+    src: default_cfg.j2
+  when:  'ansible_network_os == "eos"'
+
+- name: Configure NTP on Cisco NXOS
+  cisco.nxos.nxos_config:
+    src: nxos_cfg.j2
+  when:  'ansible_network_os == "nxos"'
+
