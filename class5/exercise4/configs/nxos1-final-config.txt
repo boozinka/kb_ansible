@@ -20,3 +20,4 @@ router bgp 22
     description configured by ansible
     address-family ipv4 unicast
 !
+

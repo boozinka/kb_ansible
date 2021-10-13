@@ -796,5 +796,128 @@ interface Loopback99
 --------
 
 
+Class 7. Parsers and Dynamic Inventory
+
+
+ - [ ] I.    hostvars
+ - [ ] II.   block-rescue-always
+ - [ ] III.  The Parsing Problem
+ - [ ] IV.   pipe JSON
+ - [ ] V.    TextFSM + Ansible
+ - [ ] VI.   Genie  
+ - [ ] VII.  Ansible + regex_replace
+ - [ ] VIII. Ansible + regex_findall
+ - [ ] IX.   Ansible + regex_search (Part1)
+ - [ ] X.    Ansible + regex_search (Part2)
+ - [ ] XI.   Dynamic Inventory
+ - [ ] XII.  Dynamic Inventory Example
+ - [ ] XIII. An Inventory Directory
+
+
+Exercises:
+-----------
+
+1. Using class5, exercise4 as a base solution, change this earlier exercise such that you do NOT hard-code the "bgp_peer_ip" in inventory. In other words, in our earlier solution, we had something similar to the following embedded in our inventory: 
+
+$ cat host_vars/nxos1/bgp.yml 
+bgp_peer_ip: 172.31.254.2
+Consequently, we hard-coded the "nxos2" BGP peer IP address in our inventory for nxos1 (and vice versa).
+
+In this new solution, convert over and use "hostvars" instead. In other words, nxos1 should access the hostvars for "nxos2" and look up this BGP peer IP address which is defined in the nxos2 inventory (using hostvars).
+
+If necessary, just use my earlier class5, exercise4 solution as the starting point for solving this problem.
+
+
+2. See below:
+
+****
+Note, this block/rescue behavior and recovering the password is broken in the current version of Ansible. Consequently, you will need to skip this exercise or alternatively downgrade to ansible 3.3.0 and ansible-base 2.10.8
+
+See https://github.com/ansible-collections/ansible.netcommon/issues/133
+****
+
+
+Using a "block" and a "rescue" statement execute "eos_config" and configure two DNS servers. For the block section, you should intentionally set an invalid password in the "eos_config" task such that your authentication will fail. You might need to use a section similar to the following to accomplish this: 
+
+- name: Attempt configuration using an invalid password
+  vars:
+    ansible_ssh_pass: "invalid"
+  eos_config:
+    # remaining lines for task
+
+Then in the rescue section, you would need to set the password back to the correct value. For this task, you should use an environment variable so you don't hard-code the lab password in the playbook. 
+
+  vars:
+    # Use environment variable to avoid hard-coded passwd
+    ansible_ssh_pass: "{{lookup('env','ANSIBLE_PASSWORD')}}"
+
+The rescue section of the playbooks should properly configure the two DNS servers using "eos_config". Consequently, the general pattern for this playbook will be--the block section will fail authentication and then the rescue section will retry this operation and should succeed.
+
+
+3a. Exercise1 of this lesson should create a valid BGP session between nxos1 and nxos2. Additionally, each router should be exchanging announcing two BGP prefixes. Use the "show ip bgp summary" command, the nxos_command module, a TextFSM template (the ntc-template, "cisco_nxos_show_ip_bgp_summary.template"), and Ansible's parse_cli_textfsm filter to extract structured BGP information.
+
+From this structured data, add an ansible "assert" statement that checks for the following: 
+•	The "STATE_PFXRCD" field should not contain "Shut" (short for Shutdown).
+•	The "STATE_PFXRCD" field should not contain "Idle" (BGP has been configured, but not transitioned to the established state).
+•	The "STATE_PFXRCD" field should have at least two BGP prefixes.
+This process will return an empty list if BGP has not been configured.
+
+3b. Using the ntc-templates index file, and ntc_parse, retrieve the output of "show vlan" (as structured data) from the four Arista devices. You will likely need to define the following three variables to accomplish this: 
+
+  vars:
+    platform: "arista_eos"
+    command: "show vlan"
+    # where {{ username }} is the name of your lab user
+    textfsm_index: "/home/{{ username }}/ntc-templates/ntc_templates/templates/"
+Display your returned data structure to standard output.
+
+
+4a. Using genie and the "clay584.genie" collection execute "show interface" on the two NX-OS switches. Use the "parse_genie" filter to convert this output to structured data.
+
+Print the returned data structure to standard out using "debug" and verify that this data structure is in fact structured data (instead of a string).
+
+4b. Repeat the same pattern as exercise4a except this time execute "show version". From this output extract the software version and print it to the screen.
+
+
+5a. Execute "show lldp neighbors" on both of the NX-OS devices. Use regular expressions and the regex_findall() filter to extract the following: remote_name, local_interface, remote_interface.
+
+Print these three fields out the the screen using a data structure (a list or a dictionary for the outermost data structure).
+
+5b. Use regex_search and "show version" to extract the software version from each of the Arista devices. Display this software version to standard output. Note, you could also solve this problem on the Arista's using pipe JSON, but here the explicit purpose is to use regular expressions.
+
+
+6. [Optional - requires Python] - Expand the dynamic inventory script located here such that all the devices located in Ansible inventory (~/ansible-hosts.ini) are included in the dynamic inventory script. You should just hard code the device definitions inside the script such that they get outputted properly as JSON (i.e. hard-code them in the script using Python data structures).
+
+Ensure your script works properly when executed as follows: 
+
+$ ./your_inv_script.py --list
+# Where "nxos1" is some host in inventory
+$ ./your_inv_script.py --host nxos1
+In a real dynamic  inventory scenario, you would be pulling the device and group information from external systems via APIs; converting to the proper data structure(s), and then outputting these data structures in JSON. Consequently, in this exercise, we are only really doing the last part of this (the proper output in JSON format so Ansible can ingest the inventory information).
+
+When your script is done, the output of "ansible-inventory --graph -i ./your_inv_script.py" should look as follows: 
+
+$ ansible-inventory --graph -i ./dyn_inv.py 
+@all:
+  |--@arista:
+  |  |--arista5
+  |  |--arista6
+  |  |--arista7
+  |  |--arista8
+  |--@cisco:
+  |  |--cisco1
+  |  |--cisco2
+  |  |--cisco5
+  |  |--cisco6
+  |--@juniper:
+  |  |--vmx1
+  |  |--vmx2
+  |--@local:
+  |  |--localhost
+  |--@nxos:
+  |  |--nxos1
+  |  |--nxos2
+  |--@ungrouped:
+
 
 

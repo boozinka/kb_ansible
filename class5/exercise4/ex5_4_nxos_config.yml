@@ -22,16 +22,16 @@
         src: "./configs/{{ inventory_hostname }}/"
         dest: "./configs/{{ inventory_hostname }}-final-config.txt"
 
-#    - name: Configure Interface and BGP using config files
-#      cisco.nxos.nxos_config:
-#        src: "configs/{{ inventory_hostname }}-final-config.txt"
-#
-#    - name: Verify that the new BGP peers are established
-#      cisco.nxos.nxos_command:
-#        commands: show ip bgp summary
-#      register: sh_bgp
-#
-#    - name: Print out the BGP summary
-#      ansible.builtin.debug:
-#        var: sh_bgp.stdout_lines[0]
+    - name: Configure Interface and BGP using config files
+      cisco.nxos.nxos_config:
+        src: "configs/{{ inventory_hostname }}-final-config.txt"
+
+    - name: Verify that the new BGP peers are established
+      cisco.nxos.nxos_command:
+        commands: show ip bgp summary
+      register: sh_bgp
+
+    - name: Print out the BGP summary
+      ansible.builtin.debug:
+        var: sh_bgp.stdout_lines[0]
 
