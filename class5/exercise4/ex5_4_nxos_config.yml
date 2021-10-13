@@ -2,17 +2,36 @@
 - name: Exercise 5.4 - Use 'nxos_config' to deploy configs from exercise 3
   hosts: nxos1:nxos2
   gather_facts: False
+  vars_files:
+    - group_vars/nxos/bgp.yml
   tasks:
-    - name: Configure Interface and BGP using config files
-      cisco.nxos.nxos_config:
-        src: "configs/{{ inventory_hostname }}-final-config.txt"
+    - name: Create Interface Configuration File
+      ansible.builtin.template:
+        src: ex5_4_nxos_interfaces.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/01-{{ inventory_hostname }}-intf.txt"
 
-    - name: Verify that the new BGP peers are established
-      cisco.nxos.nxos_command:
-        commands: show ip bgp summary
-      register: sh_bgp
+    - name: Create BGP Configuration File
+      ansible.builtin.template:
+        src: ex5_4_nxos_bgp.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/02-{{ inventory_hostname }}-bgp.txt"
 
-    - name: Print out the BGP summary
-      ansible.builtin.debug:
-        var: sh_bgp.stdout_lines[0]
+    - name: Combine/assemble previously generated files into one file
+      ansible.builtin.assemble:
+        src: "./configs/{{ inventory_hostname }}/"
+        dest: "./configs/{{ inventory_hostname }}-final-config.txt"
+
+#    - name: Configure Interface and BGP using config files
+#      cisco.nxos.nxos_config:
+#        src: "configs/{{ inventory_hostname }}-final-config.txt"
+#
+#    - name: Verify that the new BGP peers are established
+#      cisco.nxos.nxos_command:
+#        commands: show ip bgp summary
+#      register: sh_bgp
+#
+#    - name: Print out the BGP summary
+#      ansible.builtin.debug:
+#        var: sh_bgp.stdout_lines[0]
 
