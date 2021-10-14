@@ -916,8 +916,135 @@ $ ansible-inventory --graph -i ./dyn_inv.py
   |  |--localhost
   |--@nxos:
   |  |--nxos1
+
   |  |--nxos2
   |--@ungrouped:
 
 
+
+Class 8. Additional Ansible Techniques and Debugging
+
+
+- [ ] I.    Lookups
+- [ ] II.   Filters (Part1)
+- [ ] III.  Filters (Part2)
+- [ ] IV.   Plugins 
+- [ ] V.    Data Structures and Zip (Part1)
+- [ ] VI.   Data Structures and Zip (Part2)
+- [ ] VII.  Zip and Combine
+- [ ] VIII. List Concatenation
+- [ ] IX.   Ansible Debugging
+- [ ] X.    Ansible Debug Examples (Part1)
+- [ ] XI.   Ansible Debug Examples (Part2)
+- [ ] XII.  Vault
+
+
+Exercises:
+-----------
+
+1. Use TextFSM and the below ntc-template to retrieve "show lldp neighbors" from the two NX-OS switches:
+
+cisco_nxos_show_lldp_neighbors.template
+
+Convert the data structure returned via TextFSM from a list of lists to a dictionary.
+
+The new dictionary format should be: the keys are the local interface name and the corresponding value is the remote device name.
+
+Inside Ansible, you should use a loop and the "combine" filter to accomplish this task. You should print your final data structure to the screen as part of your playbook. Your final data structure should look similar to the following (this is only showing nxos1): 
+
+    "lldp_map": {
+        "Eth1/1": "nxos2.lasthop.io",
+        "Eth1/2": "nxos2.lasthop.io",
+        "Eth1/3": "nxos2.lasthop.io",
+        "Eth1/4": "nxos2.lasthop.io"
+    }
+
+2. Create a custom Ansible inventory for the Arista devices that does NOT contain either the ansible_user or the ansible_ssh_pass.
+
+Create an Ansible playbook. In this playbook, create variables for both 'ansible_ssh_pass' and for 'ansible_user'. The 'ansible_ssh_pass' variable should be set using a "lookup" and the ANSIBLE_PASSWORD environment variable (this environment variable should already be set in the lab environment). In other words, you should not hard-code the password in the playbook; instead you should be reading it from the referenced environment variable.
+
+Your playbook should successfully execute the "show vlan" command on all of the remote Arista devices using the eos_command module (use the "-i new_inventory_file.ini" to use the new inventory file you created). Print the returned output from "show vlan" to the screen to verify the playbook executed correctly.
+
+
+3. On the four Arista switches create a playbook that retrieves the switching table using 'pipe json' (i.e. 'show mac address-table | json'). From this output, convert the returned data structure to a dictionary. This new dictionary should use the mac-addresses as the keys and the source interfaces as the values (i.e. for a given mac-address the corresponding value should be the interface that this mac-address originated on).
+
+You should accomplish this data structure conversion using 'map-attribute', 'zip', and then casting as a 'dict'. For each Arista switch, print the resulting dictionary to standard output.
+
+
+4. Using the four Arista switches and the same 'show mac address-table | json' command, create a playbook that creates a list of all of the mac-addresses in the switching table (for each switch). In order to do this, you should use list concatenation and a loop.
+
+
+5. Configure the following VLANs on nxos1 and nxos2 (use the nxos_vlans module to accomplish this): 
+
+nxos1
+- vlan_id: 100
+  name: blue100
+- vlan_id: 101
+  name: blue101
+
+nxos2
+- vlan_id: 200
+  name: blue200
+- vlan_id: 201
+  name: blue201
+In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
+
+a. Uses the nxos_command module to execute "show vlan | json" and records this output.
+b. Uses Ansible set filters to determine the common VLANs that are configured on both nxos1 and nxos2. Print these common VLANs to standard output.
+c. Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
+d. Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
+
+Note, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
+
+6. Exercise6 contains a set of playbooks (exercise6a.yml through exercise6g.yml). For reference, see the exercise directory here.
+
+Each of these playbooks will fail (i.e. not execute properly). You should "git clone" this repository to your lab environment (or otherwise copy the six playbooks; you will also need to copy any of the TextFSM templates located in that exercise6 directory).
+
+Your job for each of these playbooks is to find and correct the error in each playbook. 
+
+In general, the playbook should only contain one error. Note, the error may or may not result in an actual Ansible execution failure (i.e. ansible-playbook detecting the task as failed and stopping execution). Or worded differently, a couple of the playbooks execute successfully from an Ansible perspective, but do not do what they are supposed to do.
+
+You should try to fix each one of these playbooks on your own.
+
+For reference, there is also a solutions directory where I have created a "fixed" version of each playbook. You can do a diff between the failing and fixed playbook to see the exact issue (but once again try to solve them yourself).
+
+# How to diff exercise6a
+$ diff exercise6a.yml solutions/exercise6a_fixed.yml 
+
+7. Create a new directory for exercise7 and in this directory create the following sub-directories and files:
+
+$ cat ./group_vars/arista/dns.yml
+---
+domain_name: bogus.com
+dns_server1: 8.8.8.8
+dns_server2: 8.8.4.4
+
+$ cat ./group_vars/arista/ntp.yml
+---
+ntp_server1: 130.126.24.24
+ntp_server2: 152.2.21.1
+
+Also create the following playbook:
+
+---
+- name: Exercise7
+  hosts: arista
+  gather_facts: False
+  tasks:
+    - debug:
+        var: ntp_server1
+
+    - debug:
+        var: domain_name
+
+Verify your playbook executes properly and the two specified variables from group_vars are printed out to standard output.
+ 
+a. Using 'ansible-vault encrypt', encrypt the two YAML files in group_vars. Verify the two files are in fact encrypted by looking at the files. Verify your playbook still executes properly when using the '--ask-vault-pass' command-line argument.
+b. Create a file named ".my_vault" in the same directory as your playbook. Store your vault password in this file. Using this file and the "--vault-password-file .my_vault" command-line argument, verify your playbook still executes properly.
+c. Use 'ansible-vault view' to view the dns.yml file. You should be able to see the clear-text contents of this file.
+d. Configure the following in your ~/.ansible.cfg file:
+
+vault_password_file = /path/to/.my_vault
+After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
+e. Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
 
