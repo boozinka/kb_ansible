@@ -1048,3 +1048,137 @@ vault_password_file = /path/to/.my_vault
 After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
 e. Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
 
+
+Bonus Lesson 1. - NAPALM-Ansible
+
+ - [ ] I.    NAPALM-Ansible Overview
+ - [ ] II.   Installing NAPALM-Ansible
+ - [ ] III.  napalm_get_facts (Part1)
+ - [ ] IV.   napalm_get_facts (Part2)
+ - [ ] V.    NAPALM getters on Multiple Platforms
+ - [ ] VI.   napalm_ping
+ - [ ] VII.  NAPALM Configuration Operations
+ - [ ] VIII. NAPALM Merge
+ - [ ] X.    NAPALM Replace (Part2)
+ - [ ] XI.   NAPALM and Jinja2 (Part1)
+ - [ ] XII.  NAPALM and Jinja2 (Part2)
+
+
+Exercises:
+----------
+
+1. Use "napalm_get_facts" and the get_config() method (filter: config) to retrieve the running configuration from all of the devices in the lab environment. Save the running configurations using the following directory structure: 
+
+./BUP/
+|-- eos
+|  |-- arista5.txt
+|  |-- arista6.txt
+|  |-- arista7.txt
+|  |-- arista8.txt
+|-- ios
+|  |-- cisco1.txt
+|  |-- cisco2.txt
+|  |-- cisco5.txt
+|  |-- cisco6.txt
+|-- junos
+|  |-- vmx1.txt
+|  |-- vmx2.txt
+|-- nxos
+    |-- nxos1.txt
+    |-- nxos2.txt
+
+Your playbook should automatically create the "BUP" sub-directory and the "BUP/{{ ansible_network_os }}" sub-directory (if they do not exist). Use the Ansible "file" module to accomplish this.
+
+
+2. Use napalm_get_facts and the "get_lldp_neighbors()" method (filter: lldp_neighbors) to retrieve the LLDP neighbors from all of the Arista and Cisco IOS/IOS-XE devices.
+
+Reformat the retrieved data to print out the following table to standard output (in a somewhat readable way). Note, you might need to use the "stdout_callback = debug" to accomplish this (i.e. to make the output somewhat readable): 
+
+********* LLDP table for (cisco6) ********
+GigabitEthernet2: cisco5
+GigabitEthernet3: cisco5
+GigabitEthernet4: cisco5
+GigabitEthernet5: cisco5
+GigabitEthernet6: cisco5
+GigabitEthernet7: cisco5
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+The first entry should be the local interface and the second entry should be the remote peer that is visible via that interface. You should clearly indicate which device the LLDP data was retrieved from.
+
+This exercise will likely require that you loop through the data and use string concatenation to generate one large string (per device). You will subsequently output this string to the screen.
+
+
+3. Use Jinja2 templating to generate the following VLAN and interface configurations:
+
+VLAN Config 
+
+vlan 202
+   name blue202
+!
+vlan 203
+   name blue203
+!
+vlan 204
+   name blue204
+!
+vlan 205
+   name blue205
+!
+vlan 206
+   name blue206
+!
+vlan 207
+   name blue207
+
+interface configuration 
+
+interface Ethernet2
+   switchport access vlan 202
+!
+interface Ethernet3
+   switchport access vlan 203
+!
+interface Ethernet4
+   switchport access vlan 204
+!
+interface Ethernet5
+   switchport access vlan 205
+!
+interface Ethernet6
+   switchport access vlan 206
+!
+interface Ethernet7
+   switchport access vlan 207
+
+All of the relevant VLAN IDs and VLAN names should be stored in group_vars. All of the interface to VLAN assignment should also be stored in group_vars (i.e. which interface is assigned to which VLAN).
+
+Use napalm-ansible and the "napalm_install_config" module (merge-operation) to deploy this configuration to the "arista5" switch. Validate your configuration changes before committing them by generating and reviewing a "diff" file of the pending changes.
+
+Do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
+
+
+4. Repeat the BGP configuration exercise from class7, exercise1 using napalm-ansible.
+
+Your updated solution should use "napalm_install_config" to install the configuration changes (merge operation).
+
+Additionally, use "napalm_get_facts" and the "get_bgp_neighbors()" method (filter: bgp_neighbors) to verify that the BGP peers reach an established state ("is_up" key in the NAPALM returned data). Additionally, verify each peer is receiving two prefixes.
+
+You should use Ansible tags in your playbook to create three separate phases: build, deploy, and verify. The build phase should handle all of the configuration generation. The deploy phase should push the configuration to the devices. The verify phase should ensure the BGP relationship reaches the correct state.
+
+Use the NAPALM "nxos_ssh" driver to accomplish this exercise (add the argument "dev_os: nxos_ssh" to the NAPALM tasks).
+
+
+5. Repeat the VLAN and interface configuration specified in exercise3 except using full configuration replace.
+
+In order to accomplish this, you should use Ansible to retrieve the running configuration from Arista5. You should use this running-configuration as the basis for your Jinja2 template. Your Jinja2 template should use "include" statements to bring in both the interface configuration and the VLAN configuration (from external templates).
+
+Once again all of your new VLAN IDs and VLAN names should be stored in group_vars. Similarly, the interfaces to VLAN ID mappings should also be stored in group_vars.
+
+Note, do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
+
+At the end of the templating process, you should be generating an entire configuration that you can deploy to Arista5.
+
+Next, use "napalm_install_config (replace) to deploy this configuration to the device. Once again, verify your changes will work before you deploying them by generating a "diff" and reviewing it.
+
+Your configuration changes should only modify the arista5 switch.
+
