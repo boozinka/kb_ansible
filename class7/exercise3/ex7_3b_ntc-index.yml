@@ -1,0 +1,26 @@
+---
+- name: Exercise 7.3b - Use TextFSM 'ntc-templates' index file to parse the output
+  hosts: arista 
+  gather_facts: False
+  vars:
+    platform: "arista_eos"
+    command: "show vlan"
+    # Use "/home/wbellward/" as ntc_parse doesn't understand "~"
+    textfsm_index: "/home/wbellward/ntc-templates/ntc_templates/templates/"
+  tasks:
+    - name: Retrieve results from 'show vlan' command
+      arista.eos.eos_command:
+        commands: "{{ command }}"
+      register: output
+
+    - name: Print output varible
+      ansible.builtin.debug:
+        var: output.stdout[0]
+
+    - ansible.builtin.set_fact:
+        show_vlan: "{{ output.stdout[0] | ntc_parse(command, platform, textfsm_index) }}"
+
+    - name: Print 'sh vlan' parsed output
+      ansible.builtin.debug:
+        var: show_vlan
+

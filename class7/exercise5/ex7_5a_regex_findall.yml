@@ -1,0 +1,30 @@
+---
+- name: Exercise 7.5a - Use regex_findall to filter and extract data
+  hosts: nxos
+  gather_facts: False
+  vars:
+    command: show lldp neighbors
+  tasks:
+    - name: Retrieve results from 'show lldp neighbors' command
+      cisco.nxos.nxos_command:
+        commands: "{{ command }}"
+      register: output
+
+    - name: Trim excess ansible info and assigning varible to stdout
+      ansible.builtin.set_fact:
+        sh_lldp: "{{ output.stdout[0] }}"
+
+    - name: Print output as a list
+      ansible.builtin.debug:
+        var: sh_lldp.splitlines()
+
+    - name: Extract 'remote_name', 'local_interface' and 'remote_interface'
+      ansible.builtin.set_fact:
+        sh_lldp_list: "{{ sh_lldp | regex_findall('^(nxos\\S+)\\s+(\\S+)\\s+\\d+\\s+\\S+\\s+(\\S+)', multiline=True) }}"
+
+    - name: Print filtered output groups as a list
+      ansible.builtin.debug:
+        var: sh_lldp_list
+
+
+

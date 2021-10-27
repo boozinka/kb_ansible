@@ -1,0 +1,36 @@
+---
+- name: Exercise 7.3a - Use TextFSM to parse the output of 'show ip bgp summary'
+  hosts: nxos1
+  gather_facts: False
+  vars:
+    # Use "/home/wbellward/" or copy file into pwd as ntc_parse doesn't understand "~"
+    - fsm_template: "cisco_nxos_show_ip_bgp_summary.template" 
+  tasks:
+    - name: Retrieve results from 'sh ip bgp summary' command
+      cisco.nxos.nxos_command:
+        commands: show ip bgp summary
+      register: output
+
+    - name: Print output
+      ansible.builtin.debug:
+        var: output.stdout[0]
+
+    - name: Parse 'sh_ip_bgp' output and assign to a varible
+      ansible.builtin.set_fact:
+        sh_ip_bgp: "{{ output.stdout[0] | parse_cli_textfsm(fsm_template) }}"
+
+    - name: Assign "STATE_PFXRCD" dictionary entry to varible 
+      ansible.builtin.set_fact:
+        state_pfxrcd: "{{ sh_ip_bgp[0].STATE_PFXRCD }}"
+      when: sh_ip_bgp != []
+
+    - name: STATE_PFXRCD should not contain "Shut", "Idle" and should contain 2 or more prefix
+      ansible.builtin.assert:
+        that:
+          - "'Shut' not in sh_ip_bgp[0].STATE_PFXRCD"
+          - "'Idle' not in sh_ip_bgp[0].STATE_PFXRD"
+          - state_pfxrcd | int >= 2
+        success_msg: "BGP is established with {{ state_pfxrcd }} prefixes"
+        fail_msg: "BGP is not established or has less than 2 prefixes"
+      when: sh_ip_bgp != []
+

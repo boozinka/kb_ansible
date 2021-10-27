@@ -1,0 +1,51 @@
+---
+- name: Exercise 7.1 - Use 'hostvars' set 'bgp_peer_id' and deploy config
+  hosts: nxos
+  gather_facts: False
+  vars_files:
+    - group_vars/nxos/bgp.yml
+  tasks:
+#    - name: Check the 'eth1_4_ip_address' is in each hostvars
+#      ansible.builtin.debug:
+#        msg: "{{ hostvars[inventory_hostname]['eth1_4_ip_address'] }}"
+
+    - name: Set the BGP peer IP using hostvar
+      ansible.builtin.set_fact:
+        bgp_peer_ip: "{{ hostvars['nxos2']['eth1_4_ip_address'] }}"
+      when: "inventory_hostname == 'nxos1'"
+
+    - name: Set the BGP peer IP using hostvars
+      ansible.builtin.set_fact:
+        bgp_peer_ip: "{{ hostvars['nxos1']['eth1_4_ip_address'] }}"
+      when: "inventory_hostname == 'nxos2'"
+
+    - name: Create Interface Configuration File
+      ansible.builtin.template:
+        src: ex7_1_nxos_interfaces.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/01-{{ inventory_hostname }}-intf.txt"
+
+    - name: Create BGP Configuration File
+      ansible.builtin.template:
+        src: ex7_1_nxos_bgp.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/02-{{ inventory_hostname }}-bgp.txt"
+
+    - name: Combine/assemble previously generated files into one file
+      ansible.builtin.assemble:
+        src: "./configs/{{ inventory_hostname }}/"
+        dest: "./configs/{{ inventory_hostname }}-final-config.txt"
+
+    - name: Configure Interface and BGP using config files
+      cisco.nxos.nxos_config:
+        src: "configs/{{ inventory_hostname }}-final-config.txt"
+
+    - name: Verify that the new BGP peers are established
+      cisco.nxos.nxos_command:
+        commands: show ip bgp summary
+      register: sh_bgp
+
+    - name: Print out the BGP summary
+      ansible.builtin.debug:
+        var: sh_bgp.stdout_lines[0]
+

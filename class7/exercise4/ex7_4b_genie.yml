@@ -1,0 +1,31 @@
+---
+- name: Exercise 7.4b - Use Genie to parse "show version" output
+  hosts: nxos
+  gather_facts: False
+  vars:
+    command: show version 
+  collections:
+    - clay584.genie
+  tasks:
+    - name: Retrieve results from 'show version' command
+      cisco.nxos.nxos_command:
+        commands: "{{ command }}"
+      register: output
+
+    - name: Print output as a string
+      ansible.builtin.debug:
+        var: output.stdout[0]
+
+    - name: Parse 'show version' output and assign to a varible
+      ansible.builtin.set_fact:
+        # If 'os' type not in ansible-inventory then specify in format os= 'nxos'
+        sh_ver: "{{ output.stdout[0] | clay584.genie.parse_genie(command=command, os=ansible_network_os) }}"
+
+    - name: Print parsed output
+      ansible.builtin.debug:
+        msg:
+          - " ----------------- "
+          - "{{ inventory_hostname }}:"
+          - "{{ sh_ver.platform.software.system_version }}"
+          - " ----------------- "
+

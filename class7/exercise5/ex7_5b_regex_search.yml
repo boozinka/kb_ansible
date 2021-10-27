@@ -1,0 +1,33 @@
+---
+- name: Exercise 7.5b - Use regex_search to filter and extract data
+  hosts: arista
+  gather_facts: False
+  vars:
+    command: show version 
+  tasks:
+    - name: Retrieve results from 'show version' command
+      arista.eos.eos_command:
+        commands: "{{ command }}"
+      register: output
+
+    - name: Trim excess ansible info and assigning varible to stdout
+      ansible.builtin.set_fact:
+        sh_ver: "{{ output.stdout[0] }}"
+
+    - name: Print output as a list
+      ansible.builtin.debug:
+        var: sh_ver.splitlines()
+
+    - name: Extract 'eos version' using regex_search
+      ansible.builtin.set_fact:
+        sh_ver_list: "{{ sh_ver | regex_search('^Software.*version:\\s+(\\S+).*$', '\\1', multiline=True) }}"
+
+    - name: Print filtered output groups as a list
+      ansible.builtin.debug:
+        msg: 
+          - "-----------------"
+          - "{{ inventory_hostname }}:"
+          - "{{ sh_ver_list[0] }}"
+          - "-----------------"
+
+

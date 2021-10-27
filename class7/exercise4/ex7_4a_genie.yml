@@ -1,0 +1,27 @@
+---
+- name: Exercise 7.4a - Use Genie to parse "show interface" output
+  hosts: nxos
+  gather_facts: False
+  vars:
+    command: show interface
+  collections:
+    - clay584.genie
+  tasks:
+    - name: Retrieve results from 'show interface' command
+      cisco.nxos.nxos_command:
+        commands: "{{ command }}"
+      register: output
+
+    - name: Print output
+      ansible.builtin.debug:
+        var: output.stdout[0]
+
+    - name: Parse 'show interface' output and assign to a varible
+      ansible.builtin.set_fact:
+        # If 'os' type not in ansible-inventory then specify in format os= 'nxos'
+        sh_intf: "{{ output.stdout[0] | clay584.genie.parse_genie(command=command, os=ansible_network_os) }}"
+
+    - name: Print parsed output
+      ansible.builtin.debug:
+        msg: "{{ sh_intf }}"
+
