@@ -1182,3 +1182,76 @@ Next, use "napalm_install_config (replace) to deploy this configuration to the d
 
 Your configuration changes should only modify the arista5 switch.
 
+
+Bonus Lesson 2. - OS Upgrade, Creating yourown Filter and Module
+
+
+ - [ ] I.    OS Upgrade Overview
+ - [ ] II.   Image Transfer Overview
+ - [ ] III.  Image Transfer Steps
+ - [ ] IV.   Image Transfer Execution
+ - [ ] V.    Boot Configuration and Reload
+ - [ ] VI.   Pre-process and Post-process Steps
+ - [ ] VIII. Post-upgrade Validation
+ - [ ] IX.   Filter Plugins
+ - [ ] X.    Filter Plugins Search Path
+ - [ ] XI.   Creating your own Ansible Module
+ - [ ] XII.  Module Creation: Troubleshooting and Documentation
+
+
+Exercises:
+----------
+
+1. Create three custom filter plugins named: filter1, filter2, and filter3.
+
+The first filter plugin should convert a string to upper-case using Python's .upper() method. The second filter plugin should convert a string to lower-case using Python's .lower() method. The third filter plugin should use Python's .capitalize() method to capitalize the first letter of the string.
+
+Construct an Ansible playbook that uses each of these three filters and verify that they each work properly.
+
+
+2. Create a filter plugin that processes the "show ip arp" output from the Arista switches. The filter plugin should take the ARP output as a string and return the list of MAC addresses that are present in the ARP output.
+
+Construct an Ansible playbook that retrieves "show ip arp" from all of the Arista switches. Process this ARP output through the new filter and verify that the list of MAC addresses is being properly returned.
+
+
+3. Create a filter plugin that processes the "show ip arp" output from the four Cisco IOS/IOS-XE routers. The filter plugin should take the ARP output as a string and return a dictionary where the key is the IP address and the value is the MAC address.
+
+Construct an Ansible playbook that retrieves "show ip arp" from the four Cisco IOS/IOS-XE routers. Process this ARP output through the new filter and verify that the new dictionary is properly returned for each device.
+
+
+4. Create an Ansible module that takes one argument named "my_string". This argument is a string and is required. The module should take the string and convert it to upper case and should return it the "output" field of the results.
+
+Construct an Ansible playbook that uses this new module and verify that the module operates properly. Inspect the output using "-vvv". Ensure you see the "output" field and ensure that your original string has been converted to upper case.
+
+
+5. Create an Ansible module that takes five arguments: host, device_type, username, password, and config_list. Each of these arguments should be a string except for config_list which is a list. The "password" argument should use "no_log=True".
+
+Using these arguments establish a Netmiko SSH connection inside the new Ansible module. Additionally, use the Netmiko send_config_set() method to send the configuration commands specified in "config_list" to the remote device. The syntax for this method should be similar to the following: 
+
+# net_connect is the Netmiko connection object 
+# created by using ConnectHandler
+output = net_connect.send_config_set(config_list)
+
+Return the "output" from this command in the "output" field of the Ansible results. Also set the "changed" flag to True (if configuration changes were made).
+
+Next, construct an Ansible playbook that uses this new module. This new module should make the following two configuration changes on the "cisco1" router: 
+
+        config_list:
+          - logging buffered 20000
+          - no logging console
+Your entire task (in your playbook) should be similar to the following. Do not hard-code the password in the playbook; instead use the "ansible_ssh_pass" variable from inventory. 
+
+
+    - name: Netmiko configuration changes
+      netmiko_config:
+        host: "{{ ansible_host }}"
+        device_type: cisco_ios
+        username: "{{ ansible_user }}"
+        password: "{{ ansible_ssh_pass }}"
+        config_list:
+          - logging buffered 20000
+          - no logging console
+
+Execute your playbook and verify that it works properly. Ensure that the configuration changes were made on the remote device.
+
+
