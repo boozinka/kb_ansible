@@ -1,0 +1,26 @@
+
+### Use ansible-vault to encrypt a file
+
+ansible-vault encrypt my_file.yml
+
+
+### View an ansible-vault encrypted file
+
+ansible-vault view my_file.yml
+
+
+### Use ansible-vault decrypt to decrypt a file
+
+ansible-vault decrypt my_file.yml
+
+
+### Run a playbook so ansible prompts you for the vault password
+
+ansible-playbook --ask-vault-pass my_playbook.yml
+
+
+### Run a playbook so ansible uses the password stored in the vault password file
+
+ansible-playbook --vault-password-file .my_vault_file my_playbook.yml
+
+

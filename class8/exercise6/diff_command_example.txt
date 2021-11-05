@@ -1,0 +1,3 @@
+
+diff exercise6a.yml solutions/exercise6a_fixed.yml 
+
