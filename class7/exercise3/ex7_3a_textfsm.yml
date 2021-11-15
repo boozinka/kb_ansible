@@ -33,4 +33,4 @@
         success_msg: "BGP is established with {{ state_pfxrcd }} prefixes"
         fail_msg: "BGP is not established or has less than 2 prefixes"
       when: sh_ip_bgp != []
-
+ 
