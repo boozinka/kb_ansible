@@ -24,4 +24,4 @@
     - name: Print parsed output
       ansible.builtin.debug:
         msg: "{{ sh_intf }}"
-
+ 
