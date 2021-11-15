@@ -50,4 +50,3 @@
       ansible.builtin.debug:
         var: my_intf_attr
 
-
