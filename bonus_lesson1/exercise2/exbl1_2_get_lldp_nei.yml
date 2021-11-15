@@ -1,0 +1,30 @@
+---
+- name: Exercise Bonus Lesson 1.2 - Use Napalm 'get_facts' and 'get_lldp_neighbors filter'
+  hosts: arista:cisco
+  gather_facts: False
+  vars:
+    napalm_port:
+      eos: 443
+      ios: 22
+
+  tasks:
+    - name: napalm 'get_facts' using 'lldp_neighbors' filter method
+      napalm.napalm.get_facts:
+        filter: lldp_neighbors
+        optional_args:
+          port: "{{ napalm_port[ansible_network_os] }}"
+
+    - name: Use 'map' to create equal length lists of 'local_intf' and 'remote_host'
+      ansible.builtin.set_fact:
+        lldp_str: "{{ lldp_str | default('') + item.key + ': ' + item.value[0].hostname + '\n' }}"
+      loop: "{{ napalm_lldp_neighbors | dict2items }}"
+      loop_control:
+        label: ""
+
+    - name: Print LLDP table to stdout
+      ansible.builtin.debug:
+        msg: |
+          ********** LLDP table for ({{ inventory_hostname }}) **********
+          {{ lldp_str }}
+
+
