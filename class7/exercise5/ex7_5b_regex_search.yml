@@ -1,5 +1,5 @@
 ---
-- name: Exercise 7.5b - Use regex_search to filter and extract data
+- name: Exercise 7.5b - Use 'regex_search' to filter and extract data
   hosts: arista
   gather_facts: False
   vars:
