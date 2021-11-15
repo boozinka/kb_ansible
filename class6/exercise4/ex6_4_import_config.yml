@@ -28,4 +28,4 @@
       when:  'ansible_network_os == "nxos"'
       tags:
          - nxos
-
+ 
