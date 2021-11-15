@@ -2,8 +2,7 @@
 - name: Exercise 2.1 - Modules and Fact Gatering 
   hosts: arista5
   gather_facts: False
-  vars_files:
-    - group_vars/my_vars.yml
+  vars_files: my_vars.yml
   tasks:
     - name: Gather facts at a task level
       arista.eos.eos_facts:
