@@ -1,0 +1,34 @@
+---
+- name: Bonus Lesson 1 exercise 1.5 - Napalm config replace using Jinja2 varibles and loops
+  hosts: arista5
+  gather_facts: False
+  vars:
+    napalm_port:
+      eos: 443
+  tasks:
+
+    - name: Get config from the device
+      napalm.napalm.get_facts:
+        filter: config
+      tags: build
+
+    - name: Save the configuration locally
+      ansible.builtin.copy:
+        content: "{{ napalm_config.running }}"
+        dest: "current_config/{{ inventory_hostname }}.txt"
+      tags: build
+
+    - ansible.builtin.template:
+        src: "templates/{{ inventory_hostname }}.j2"
+        dest: "configs/{{ inventory_hostname }}/{{ inventory_hostname }}-load.txt"
+      tags: build
+
+    - napalm.napalm.install_config: 
+        replace_config: True
+        commit_changes: True
+        config_file: "configs/{{ inventory_hostname }}/{{ inventory_hostname }}-load.txt" 
+        diff_file: "diffs/{{ inventory_hostname }}-diff.txt"
+        optional_args:
+          port: "{{ napalm_port[ansible_network_os] }}"
+      tags: deploy
+

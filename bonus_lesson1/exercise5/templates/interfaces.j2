@@ -1,0 +1,6 @@
+{% for intf, vlan in intf_vlans.items() %}
+interface {{ intf }}
+  switchport access vlan {{ vlan }}
+!
+{% endfor %}
+

@@ -1,0 +1,6 @@
+{% for vlan_num, vlan_name in vlan_names.items() %}
+vlan {{ vlan_num }}
+  name {{ vlan_name }}
+!
+{% endfor %}
+
