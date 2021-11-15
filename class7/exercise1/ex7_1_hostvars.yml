@@ -48,4 +48,4 @@
     - name: Print out the BGP summary
       ansible.builtin.debug:
         var: sh_bgp.stdout_lines[0]
-
+ 
