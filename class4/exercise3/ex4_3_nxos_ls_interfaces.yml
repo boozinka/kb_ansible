@@ -27,4 +27,3 @@
       ansible.builtin.debug:
        msg: "The number of successfull packets are: {{ my_ping.packets_rx }}"
 
- 
