@@ -23,4 +23,3 @@
       ansible.builtin.debug:
         msg: "The user connected to {{ inventory_hostname }} is {{ my_user[4] }}"
 
-
