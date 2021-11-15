@@ -19,4 +19,4 @@
     - ansible.builtin.debug:
         msg: "{{ show_lldp }}"
 
-
+ 

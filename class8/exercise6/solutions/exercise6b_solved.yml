@@ -12,4 +12,4 @@
         commands: show lldp neighbors
       register: output
 
-
+ 
