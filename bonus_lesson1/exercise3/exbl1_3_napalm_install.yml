@@ -1,0 +1,31 @@
+---
+- name: Bonus Lesson 1 exercise 1.3 - Napalm install using Jinja2 varibles and loops
+  hosts: arista5
+  gather_facts: False
+  vars:
+    napalm_port:
+      eos: 443
+  tasks:
+    - ansible.builtin.template:
+        src: templates/interfaces.j2
+        dest: "configs/{{ inventory_hostname }}/{{ inventory_hostname }}-intf.txt"
+
+    - ansible.builtin.template:
+        src: templates/vlans.j2
+        dest: "configs/{{ inventory_hostname }}/{{ inventory_hostname }}-vlan.txt"
+
+    - name: Combine/assemble previously generated files into one file
+      ansible.builtin.assemble:
+        src: "./configs/{{ inventory_hostname }}/"
+        dest: "./configs/{{ inventory_hostname }}-config.txt"
+
+    - napalm.napalm.install_config: 
+        # 'replace_config' True replaces entire configuration
+        replace_config: False
+        # 'commit_changes' True merge's the changes into the configuration
+        # 'commit_changes' False allows you to validate the changes with diff before pushing
+        commit_changes: True
+        config_file: "configs/{{ inventory_hostname }}-config.txt" 
+        diff_file: "diffs/{{ inventory_hostname }}-diff.txt"
+        optional_args:
+          port: "{{ napalm_port[ansible_network_os] }}"
