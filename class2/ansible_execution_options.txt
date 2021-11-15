@@ -8,4 +8,3 @@ ansible-playbook -k -u -i ~/kb_ansible/class2/ansible-host.ini ex2_3_playbook.ym
 -u = Prompt for username
 -i = Specify inventory file to use
 
-
