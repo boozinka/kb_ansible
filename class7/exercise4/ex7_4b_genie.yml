@@ -28,4 +28,4 @@
           - "{{ inventory_hostname }}:"
           - "{{ sh_ver.platform.software.system_version }}"
           - " ----------------- "
-
+ 
