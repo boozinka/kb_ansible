@@ -29,4 +29,4 @@
     - name: Print out the ACL
       ansible.builtin.debug:
         var: sh_acl.stdout_lines[0]
-
+ 
