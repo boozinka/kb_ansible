@@ -1,5 +1,5 @@
 ---
-- name: Exercise 5.4 - Use 'nxos_config' to deploy configs from exercise 3
+- name: Exercise 5.4 - Use 'nxos_config' to deploy configs from Class3 Exercise 5
   hosts: nxos1:nxos2
   gather_facts: False
   vars_files:
