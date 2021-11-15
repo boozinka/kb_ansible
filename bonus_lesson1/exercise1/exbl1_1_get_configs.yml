@@ -1,0 +1,40 @@
+---
+- name: Exercise Bonus Lesson 1.1 - Retrieve configs using Napalm 'get_facts' and 'get_config filter'
+  hosts: arista:cisco:juniper:nxos
+  gather_facts: False
+  vars:
+    napalm_port:
+      eos: 443
+      ios: 22
+      nxos: 8443
+      junos: 830
+
+  tasks:
+    - name: Create BUP directory if it does not exist
+      ansible.builtin.file:
+        path: BUP
+        state: directory
+        mode: '0755'
+      run_once: True
+
+    - name: Create 'ansible_network_os' sub-directory if it does not exist
+      ansible.builtin.file:
+        path: "BUP/{{ ansible_network_os }}"
+        state: directory
+        mode: '0755'
+
+    - name: napalm 'get_facts'
+      napalm.napalm.get_facts:
+        filter: config
+        optional_args:
+          port: "{{ napalm_port[ansible_network_os] }}"
+
+#    - name: Print 'napalm_config' to stdout
+#      ansible.builtin.debug:
+#        msg: "{{ napalm_config.running.splitlines() }}"
+
+    - name: Copy configs to relvant sub-directories.
+      ansible.builtin.copy:
+        content: "{{ napalm_config.running }}"
+        dest: "BUP/{{ ansible_network_os }}/{{ inventory_hostname }}.txt"
+
