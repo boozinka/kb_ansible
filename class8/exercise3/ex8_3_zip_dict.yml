@@ -31,4 +31,3 @@
       ansible.builtin.debug:
         var: mac_dict
 
-
