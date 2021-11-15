@@ -61,4 +61,4 @@
           - "set system name-server {{ dns_server2 }}"
       when: ansible_network_os == "junos"
       tags: junos
-
+ 
