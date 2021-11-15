@@ -8,4 +8,4 @@
     - template:
         src: ex3_4_arista_template.j2
         dest: "configs/{{ inventory_hostname }}.txt"
- 
+  
