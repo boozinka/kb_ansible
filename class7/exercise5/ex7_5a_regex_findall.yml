@@ -26,5 +26,3 @@
       ansible.builtin.debug:
         var: sh_lldp_list
 
-
-
