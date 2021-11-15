@@ -1,0 +1,75 @@
+
+## Last commit: 2021-11-03 07:17:09 EDT by pyclass
+version 18.4R1.8;
+groups {
+    global {
+        system {
+            login {
+                user jnpr {
+                    uid 2000;
+                    class super-user;
+                    authentication {
+                        ssh-rsa "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCISPoDet/d+M7HQzL/Rpj7Kv+V2PJNyQZmrezV9QILI/tasQTxtS4r6vzQGK4hz9desLv9SaCrtlXv9Jo3+85zGWHKwGojV/8dN1G2sGQAuV9ki7XmBU9vpiihyRKYpQRNq+4zpz4Ckwz03AfgxErchOLfIEpHDtqhOVMnSoLie8Wo8HJmqD0RuFM9YubyIz4RxA6ZYZnhHr7ginr40bJgEJLAd5KAj/x9uh8e9YPz12TW3v29oXOlx2y3Pq4Mq3BK89B6U+n5niVnEfYbeiD4jJQbgJYQrxuXzcFe7pCCDAj4H2fVUzveLUiwHs5FOnn1MDmXZcsQVMi8eTRkn+Kn pynet-course";
+                    }
+                }
+            }
+            services {
+                ssh {
+                    root-login deny-password;
+                }
+            }
+            host-name vmx2;
+            syslog {
+                user * {
+                    any emergency;
+                }
+                file messages {
+                    any notice;
+                    authorization info;
+                }
+                file interactive-commands {
+                    interactive-commands any;
+                }
+            }
+        }
+        interfaces {
+            fxp0 {
+                unit 0 {
+                    family inet {
+                        address 172.30.0.156/24;
+                    }
+                }
+            }
+        }
+        routing-options {
+            static {
+                route 0.0.0.0/0 {
+                    next-hop 172.30.0.1;
+                    retain;
+                    no-readvertise;
+                }
+            }
+        }
+    }
+}
+apply-groups global;
+system {
+    login {
+        user pyclass {
+            uid 2001;
+            class super-user;
+            authentication {
+                encrypted-password "$6$WmACOwEv$ON3i.S64Es3h3ghVcew2WHrHhMYsTGMvGEGdIlkvt/bdsDE55MEx4EL4E5pkYG7TO2ycrozGg.MDGUEkEPRGO0";
+            }
+        }
+    }
+    root-authentication {
+        encrypted-password "$6$X1qqdSld$byIMOEEjfagm14nZJ4WBg8JYEOC2AuXjHiFS5QJYJ3J/7MSgJvvPv9zPHaV19HaU8Dxuw9Hl3ry.fBtPg/GV.1";
+    }
+    services {
+        netconf {
+            ssh;
+        }
+    }
+    host-name vmx2;
+}
