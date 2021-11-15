@@ -1,0 +1,68 @@
+---
+- name: Exercise Bonus Lesson 1.4 - Use 'hostvars' set 'bgp_peer_id' and deploy config
+  hosts: nxos
+  gather_facts: False
+  vars_files:
+    - group_vars/nxos/bgp.yml
+  tasks:
+#    - name: Check the 'eth1_4_ip_address' is in each hostvars
+#      ansible.builtin.debug:
+#        msg: "{{ hostvars[inventory_hostname]['eth1_4_ip_address'] }}"
+
+    - name: Set 'nxos1' BGP peer IP using hostvar
+      ansible.builtin.set_fact:
+        bgp_peer_ip: "{{ hostvars['nxos2']['eth1_4_ip_address'] }}"
+      when: "inventory_hostname == 'nxos1'"
+      tags: 
+        - build
+        - verify
+
+    - name: Set 'nxos2' BGP peer IP using hostvars
+      ansible.builtin.set_fact:
+        bgp_peer_ip: "{{ hostvars['nxos1']['eth1_4_ip_address'] }}"
+      when: "inventory_hostname == 'nxos2'"
+      tags: 
+        - build
+        - verify
+
+    - name: Create Interface Configuration File
+      ansible.builtin.template:
+        src: templates/exbl1_4_nxos_interfaces.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/01-{{ inventory_hostname }}-intf.txt"
+      tags: build
+
+    - name: Create BGP Configuration File
+      ansible.builtin.template:
+        src: templates/exbl1_4_nxos_bgp.j2
+        # Prefix the filename with a number to ensure assemble in that order
+        dest: "configs/{{ inventory_hostname }}/02-{{ inventory_hostname }}-bgp.txt"
+      tags: build
+
+    - name: Combine/assemble previously generated files into one file
+      ansible.builtin.assemble:
+        src: "./configs/{{ inventory_hostname }}/"
+        dest: "./configs/{{ inventory_hostname }}-config.txt"
+      tags: build
+
+    - napalm.napalm.install_config:
+        replace_config: False
+        commit_changes: True
+        config_file: "configs/{{ inventory_hostname }}-config.txt"
+        diff_file: "diffs/{{ inventory_hostname }}-diff.txt"
+        dev_os: nxos_ssh
+      tags: deploy
+
+    - name: napalm 'get_facts' using 'bgp_neighbors' filter method
+      napalm.napalm.get_facts:
+        filter: bgp_neighbors
+        dev_os: nxos_ssh
+      tags: verify
+
+    - name: Print out the 'napalm_bgp_neighbors' get_facts
+      ansible.builtin.debug:
+        msg: |
+          "{{ inventory_hostname }} BGP 'is_up' is: {{ napalm_bgp_neighbors.global.peers[bgp_peer_ip].is_up }}"
+          "Rcvd Prefixes: {{ napalm_bgp_neighbors.global.peers[bgp_peer_ip].address_family.ipv4.received_prefixes }}"
+      tags: verify
+
