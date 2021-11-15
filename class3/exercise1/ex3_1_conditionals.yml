@@ -34,4 +34,3 @@
       #when: sh_ip_arp_eos is defined
       when: ansible_network_os == "eos" 
 
- 
