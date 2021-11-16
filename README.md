@@ -326,19 +326,21 @@ Reminder, you can execute certain string methods inside Ansible (in a Jinja2 con
 
 ### Exercises:
 
-1a. Construct an Ansible playbook that contains a single play. The play should execute the following:
+1. Ansible 'conditionals', 'tags' and 'limits'
 
-* If the ansible_network_os is "eos" then "eos_command" should be used to retrieve "show ip arp"
-* If the ansible_network_os is "ios" then "ios_command" should be used to retrieve "show ip arp"
-* If the ansible_network_os is "junos" then "junos_command" should be used to retrieve "show arp" (notice slight command differences).
-* For each of the above, register the output into a unique variable for example, show_ip_arp_eos.
-* Print out the registered output only for the EOS devices.
+   a. Construct an Ansible playbook that contains a single play. The play should execute the following:
 
-Note, you will be required to disable fact gathering for the Juniper device. There is an issue with the Juniper lab device and Ansible where fact gathering will fail.
+   * If the ansible_network_os is "eos" then "eos_command" should be used to retrieve "show ip arp"
+   * If the ansible_network_os is "ios" then "ios_command" should be used to retrieve "show ip arp"
+   * If the ansible_network_os is "junos" then "junos_command" should be used to retrieve "show arp" (notice slight command differences).
+   * For each of the above, register the output into a unique variable for example, show_ip_arp_eos.
+   * Print out the registered output only for the EOS devices.
+   
+   Note, you will be required to disable fact gathering for the Juniper device. There is an issue with the Juniper lab device and Ansible where fact gathering will fail.
 
-1b. Expand on your playbook that you created in exercise1a. Add tags into your playbook such that you can execute only the "eos", "ios", or "junos" section of your playbook depending on which tag you provide. For example, if I provide the "eos" tag, then only the "eos" tasks should be run.
+   b. Expand on your playbook that you created in exercise1a. Add tags into your playbook such that you can execute only the "eos", "ios", or "junos" section of your playbook depending on which tag you provide. For example, if I provide the "eos" tag, then only the "eos" tasks should be run.
 
-1c. Use the "--limit" argument and your playbook from exercise1a to execute the playbook only for "arista5".
+   c. Use the "--limit" argument and your playbook from exercise1a to execute the playbook only for "arista5".
 
 
 2. Create a Playbook that executes against the nxos1 switch. This playbook should use a "loop" and the "nxos_command" module to execute "show vlan id" for each of the following four VLANs: 1, 2, 3, 4. Register the output of this task to a variable named "vlans".
@@ -352,30 +354,30 @@ Loop over these lines and find the LLDP entry that contains "twb-sf-hpsw1". This
 
 Using this new lldp_entry variable and the split() method use set_fact to extract the following three items from the line: remote_device, local_intf, remote_intf. Remember that split() will break the line up in consecutive white space and will return a list. So with the following line: 
 
-twb-sf-hpsw1        Fa4            120        B      15
-
-lldp_entry.split() would return the following list: 
-
-['twb-sf-hpsw1', 'Fa4', '120', 'B', '15']
+    twb-sf-hpsw1        Fa4            120        B      15
+    
+    lldp_entry.split() would return the following list: 
+    
+    ['twb-sf-hpsw1', 'Fa4', '120', 'B', '15']
 
 In this above output, remote_device is "twb-sf-hpsw1", local_intf is "Fa4" and remote_intf is "15".
 
 Print the following three variables to stdout: remote_device, local_intf, remote_intf. Your output should look similar to the following: 
 
-ok: [cisco1] => {
-    "msg": [
-        "Remote device: twb-sf-hpsw1",
-        "Local intf: Fa4",
-        "Remote intf: 15"
-    ]
-}
-ok: [cisco2] => {
-    "msg": [
-        "Remote device: twb-sf-hpsw1",
-        "Local intf: Fa4",
-        "Remote intf: 13"
-    ]
-}
+    ok: [cisco1] => {
+        "msg": [
+            "Remote device: twb-sf-hpsw1",
+            "Local intf: Fa4",
+            "Remote intf: 15"
+        ]
+    }
+    ok: [cisco2] => {
+        "msg": [
+            "Remote device: twb-sf-hpsw1",
+            "Local intf: Fa4",
+            "Remote intf: 13"
+        ]
+    }
 
 Note, there are other, better ways to solve problems similar to this. In particular, you can use parsers such as TextFSM and Cisco-Genie to accomplish the parsing for you. We will talk about these more later in the course.
 
@@ -399,12 +401,16 @@ For the "Ethernet" interfaces section, you should use a Jinja2 for-loop in your 
 
 Additionally, each of the interfaces should be configured with the proper VLAN (see reference configuration here). This VLAN information should be stored in group_vars/arista.yml in some way (your data structure will need to create a binding in some way between the interface name and the VLAN assignment). 
 
-Table of IP addresses:
------------------------
-arista5       10.220.88.32/24
-arista6       10.220.88.33/24
-arista7       10.220.88.34/24
-arista8       10.220.88.35/24
+
+|     Table of IP addresses     |
+|-------------------------------|
+|  Device   |   IP Addresses    |
+|-----------|-------------------|
+| arista5   |  10.220.88.32/24  |
+| arista6   |  10.220.88.33/24  |
+| arista7   |  10.220.88.34/24  |
+| arista8   |  10.220.88.35/24  |
+
 
 These generated configurations when complete will be identical to what is configured on the Arista devices (except I have dropped the "username/password" section as I didn't want that checked into GitHub).
 
@@ -412,78 +418,78 @@ These generated configurations when complete will be identical to what is config
 5. Use Jinja2 templating and an Ansible playbook to generate the following interface and BGP configurations for nxos1 and nxos2 respectively.
   
 
-##### nxos1 #####
-interface Ethernet1/4
-  ip address 172.31.254.1/30
-!
-interface loopback101
-  ip address 172.31.101.101/32
-!
-interface loopback102
-  ip address 172.31.102.101/32
-!
-!
-feature bgp
-router bgp 22
-  router-id 172.31.101.101
-  address-family ipv4 unicast
-    network 172.31.101.101/32
-    network 172.31.102.101/32
-  neighbor 172.31.254.2
-    remote-as 22
-    description configured by ansible
-    address-family ipv4 unicast
-!
-
-
-##### nxos2 #####
-interface Ethernet1/4
-  ip address 172.31.254.2/30
-!
-interface loopback101
-  ip address 172.31.101.102/32
-!
-interface loopback102
-  ip address 172.31.102.102/32
-!
-!
-feature bgp
-router bgp 22
-  router-id 172.31.101.102
-  address-family ipv4 unicast
-    network 172.31.101.102/32
-    network 172.31.102.102/32
-  neighbor 172.31.254.1
-    remote-as 22
-    description configured by ansible
-    address-family ipv4 unicast
-!
+    ##### nxos1 #####
+    interface Ethernet1/4
+      ip address 172.31.254.1/30
+    !
+    interface loopback101
+      ip address 172.31.101.101/32
+    !
+    interface loopback102
+      ip address 172.31.102.101/32
+    !
+    !
+    feature bgp
+    router bgp 22
+      router-id 172.31.101.101
+      address-family ipv4 unicast
+        network 172.31.101.101/32
+        network 172.31.102.101/32
+      neighbor 172.31.254.2
+        remote-as 22
+        description configured by ansible
+        address-family ipv4 unicast
+    !
+    
+    
+    ##### nxos2 #####
+    interface Ethernet1/4
+      ip address 172.31.254.2/30
+    !
+    interface loopback101
+      ip address 172.31.101.102/32
+    !
+    interface loopback102
+      ip address 172.31.102.102/32
+    !
+    !
+    feature bgp
+    router bgp 22
+      router-id 172.31.101.102
+      address-family ipv4 unicast
+        network 172.31.101.102/32
+        network 172.31.102.102/32
+      neighbor 172.31.254.1
+        remote-as 22
+        description configured by ansible
+        address-family ipv4 unicast
+    !
 
 For this process, you should have two separate Jinja2 templates: one for the interfaces section and one for the BGP configuration.
 
 The following items should be variables in your Jinja2 templates: 
 
-interfaces
-{{ eth1_4_ip_address }}
-{{ eth1_4_netmask }}
-{{ loopback101_ip_address }}
-{{ loopback101_netmask }}
-{{ loopback102_ip_address }}
-{{ loopback102_netmask }}
-
-bgp
-{{ bgp_asn }}
-{{ bgp_peer_ip }}
+    interfaces
+    {{ eth1_4_ip_address }}
+    {{ eth1_4_netmask }}
+    {{ loopback101_ip_address }}
+    {{ loopback101_netmask }}
+    {{ loopback102_ip_address }}
+    {{ loopback102_netmask }}
+    
+    bgp
+    {{ bgp_asn }}
+    {{ bgp_peer_ip }}
 
 The BGP networks that are announced should also be made into variables in some way (these values would ultimately be the loopback101 and loopback102 IP addresses and netmasks).
 I recommend that you define all of these variables in host_vars and group_vars. In my reference solution, I only defined the {{ bgp_asn }} in group_vars; everything else was defined in host_vars.
 
 I also defined the networks to advertise as follows (for example, in host_vars/nxos1/bgp.yml): 
 
-bgp_peer_ip: 172.31.254.2
-bgp_advertise: 
-  - "{{ loopback101_ip_address }}/{{ loopback101_netmask }}"
-  - "{{ loopback102_ip_address }}/{{ loopback102_netmask }}"
+    bgp_peer_ip: 172.31.254.2
+    bgp_advertise: 
+      - "{{ loopback101_ip_address }}/{{ loopback101_netmask }}"
+      - "{{ loopback102_ip_address }}/{{ loopback102_netmask }}"
 
 In other words, I defined the variables for {{ loopback101_ip_address }} and {{ loopback101_netmask }} in host_vars/nxos1/interfaces.yml and then used these variables in my bgp.yml file.
 
