@@ -95,17 +95,17 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
    b. Add two hosts to the arista and cisco groups and re-inspect the inventory using ansible-inventory --list -i ./inventory.ini. Additionally, use the --graph option. This option provides a more compressed view of your inventory. Your --graph output should look similar to the following:
 
      all:
-     \|---arista:
-     \|  \|--arista5
-     \|  \|--arista6
-     \|
-     \|---cisco:
-     \|  \|--cisco1
-     \|  \|--cisco2
-     \|
-     \|---local:
-     \|
-     \|---ungrouped:
+      l---arista:
+      l  l--arista5
+      l  l--arista6
+      l
+      l---cisco:
+      l  l--cisco1
+      l  l--cisco2
+      l
+      l---local:
+      l
+      l---ungrouped:
 
 
 
@@ -193,105 +193,115 @@ localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
 ### Exercises:
 
-1a. Create a Playbook containing a Play that executes on the "arista5" host. Ensure that "gather_facts" is set to True. Create a task that uses the "debug" module to print the "ansible_facts" to stdout. Create a subsequent task that prints just "ansible_facts.net_all_ipv4_addresses" to stdout.
+1. Ansible vars, get_facts and set_facts
 
-1b. Add tasks to your Playbook to print out inventory information about arista5. This should include both the "ansible_network_os" and the "ansible_host" variables.
+   a. Create a Playbook containing a Play that executes on the "arista5" host. Ensure that "gather_facts" is set to True. Create a task that uses the "debug" module to print the "ansible_facts" to stdout. Create a subsequent task that prints just "ansible_facts.net_all_ipv4_addresses" to stdout.
 
-1c. Create a directory called "group_vars" in the same directory as your Playbook. Within this directory, create a file named "all.yml". In this file, define a variable named "desired_eos_version" and set it to a value of "4.18.3". Add another task to your Playbook to print out the value of this "desired_eos_version" variable.
+   b. Add tasks to your Playbook to print out inventory information about arista5. This should include both the "ansible_network_os" and the "ansible_host" variables.
 
-1d. In the same directory as your Playbook, create a YAML file called "my_vars.yml". Within this file, create the same variable named "desired_eos_version" as in the previous exercise, but with a different value. Load this variable from my_vars.yml by adding "vars_files: my_vars.yml" into your Playbook. Re-run the Playbook to see what happens. Which "desired_eos_version" wins? Why?
+   c. Create a directory called "group_vars" in the same directory as your Playbook. Within this directory, create a file named "all.yml". In this file, define a variable named "desired_eos_version" and set it to a value of "4.18.3". Add another task to your Playbook to print out the value of this "desired_eos_version" variable.
 
-1e. Add a task to your playbook to create a new variable using "set_fact". Name this variable "device_hostname" and set the value of it equal to the "inventory_hostname" combined with the suffix ".lab.io". In a final task, print the value of this variable.
+   d. In the same directory as your Playbook, create a YAML file called "my_vars.yml". Within this file, create the same variable named "desired_eos_version" as in the previous exercise, but with a different value. Load this variable from my_vars.yml by adding "vars_files: my_vars.yml" into your Playbook. Re-run the Playbook to see what happens. Which "desired_eos_version" wins? Why?
+
+   e. Add a task to your playbook to create a new variable using "set_fact". Name this variable "device_hostname" and set the value of it equal to the "inventory_hostname" combined with the suffix ".lab.io". In a final task, print the value of this variable.
 
 
-2a. Create a new directory that includes a Playbook and a "group_vars" directory. The group_vars directory should contain a "cisco" subdirectory. Inside this "group_vars/cisco" subdirectory, create a file named "bgp.yml". Inside this "bgp.yml" file create a variable for "bgp_asn" and assign it a value between 65000 and 65535. Use the "debug" module to print a message to stdout. The message should look similar to the following: 
+2. Inventory Varibles - host_vars and group_vars
 
-TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-ok: [cisco1] => {
-    "msg": "The ASN for host cisco1 is 65001"
-}
-ok: [cisco5] => {
-    "msg": "The ASN for host cisco5 is 65001"
-}
-ok: [cisco2] => {
-    "msg": "The ASN for host cisco2 is 65001"
-}
-ok: [cisco6] => {
-    "msg": "The ASN for host cisco6 is 65001"
-}
+   a. Create a new directory that includes a Playbook and a "group_vars" directory. The group_vars directory should contain a "cisco" subdirectory. Inside this "group_vars/cisco" subdirectory, create a file named "bgp.yml". Inside this "bgp.yml" file create a variable for "bgp_asn" and assign it a value between 65000 and 65535. Use the "debug" module to print a message to stdout. The message should look similar to the following: 
 
-2b. Create a "host_vars" directory, and a subdirectory named "cisco5" within it. Inside this, "host_vars/cisco5", create a file named "bgp.yml". Inside this file, create a variable named "bgp_asn" using a different ASN value. Re-run the Playbook. You should observe that the host_vars "bgp_asn" has higher priority than the group_vars "bgp_asn" variable.
+    TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+    ok: [cisco1] => {
+        "msg": "The ASN for host cisco1 is 65001"
+    }
+    ok: [cisco5] => {
+        "msg": "The ASN for host cisco5 is 65001"
+    }
+    ok: [cisco2] => {
+        "msg": "The ASN for host cisco2 is 65001"
+    }
+    ok: [cisco6] => {
+        "msg": "The ASN for host cisco6 is 65001"
+    }
 
-2c. Create the following subdirectories: cisco1, cisco2, cisco6 (inside the host_vars directory). The "host_vars/cisco5" subdirectory should already exist. Note, the directory names must exactly match the Ansible "inventory_hostname". In each of these ciscoX directories create a file named "ip_addresses.yml". Inside this file create a "loopback0" variable and assign this variable a unique IPv4 address (for example, 1.1.1.1 for cisco1).
+   b. Create a "host_vars" directory, and a subdirectory named "cisco5" within it. Inside this, "host_vars/cisco5", create a file named "bgp.yml". Inside this file, create a variable named "bgp_asn" using a different ASN value. Re-run the Playbook. You should observe that the host_vars "bgp_asn" has higher priority than the group_vars "bgp_asn" variable.
+
+   c. Create the following subdirectories: cisco1, cisco2, cisco6 (inside the host_vars directory). The "host_vars/cisco5" subdirectory should already exist. Note, the directory names must exactly match the Ansible "inventory_hostname". In each of these ciscoX directories create a file named "ip_addresses.yml". Inside this file create a "loopback0" variable and assign this variable a unique IPv4 address (for example, 1.1.1.1 for cisco1).
 
 Inside the same ciscoX directory, create a second file named "bgp.yml". In this file create a variable "bgp_router_id" and assign it a value of the "loopback0" variable you just created (remember your  "{{ loopback0 }}" notation). The "cisco5" bgp.yml file should contain both the "bgp_asn" and the "bgp_router_id".
 
 Finally, modify your Playbook such that your output looks similar to the following. 
 
-TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-ok: [cisco2] => {
-    "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
-}
-ok: [cisco1] => {
-    "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
-}
-ok: [cisco6] => {
-    "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
-}
-ok: [cisco5] => {
-    "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
-}
+    TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+    ok: [cisco2] => {
+        "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
+    }
+    ok: [cisco1] => {
+        "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
+    }
+    ok: [cisco6] => {
+        "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
+    }
+    ok: [cisco5] => {
+        "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
+    }
 
 The above exercise demonstrates that you can store additional inventory variables in host_vars, and group_vars. These subdirectories also allow you to divide your YAML into multiple files which can simplify inventory management.
 
 
-3a. Create a Playbook that operates against the "nxos" group. This Playbook should contain a Play that uses the "nxos_command" module to gather the output from "show version". Register the result of this command to a variable and print the variable out in a second task.
+3. 'nxos_command' module and 'ansible_ssh_pass' commands
 
-3b. Modify the Playbook to run both "show version" and "show lldp neighbors". Once again, "register" the result and print the output.
+   a. Create a Playbook that operates against the "nxos" group. This Playbook should contain a Play that uses the "nxos_command" module to gather the output from "show version". Register the result of this command to a variable and print the variable out in a second task.
 
-3c. Modify the debug task to print only the output of "show lldp neighbors" to stdout. You should be accessing my_variable["stdout_lines"][1] (where "my_variable" is the name of the variable that you "registered"). Alternatively, you could access my_variable["stdout"][1].
+   b. Modify the Playbook to run both "show version" and "show lldp neighbors". Once again, "register" the result and print the output.
 
-3d. Copy the "ansible-hosts.ini" file from your home directory; modify this file to no longer contain the "ansible_ssh_pass" variable. Re-execute your Playbook, pointing to use this modified inventory file (you can accomplish this by using "-i ./ansible-hosts.ini"). Use Ansible command-line arguments to pass the ansible_ssh_pass value. Your Playbook output should be the same as the previous task.
+   c. Modify the debug task to print only the output of "show lldp neighbors" to stdout. You should be accessing my_variable["stdout_lines"][1] (where "my_variable" is the name of the variable that you "registered"). Alternatively, you could access my_variable["stdout"][1].
+
+   d. Copy the "ansible-hosts.ini" file from your home directory; modify this file to no longer contain the "ansible_ssh_pass" variable. Re-execute your Playbook, pointing to use this modified inventory file (you can accomplish this by using "-i ./ansible-hosts.ini"). Use Ansible command-line arguments to pass the ansible_ssh_pass value. Your Playbook output should be the same as the previous task.
 
 
-4a. Create a Playbook that clears the logging buffer on the cisco6 device. The command to clear the logging buffer is: "clear logging". This command will prompt for confirmation ("Clear logging buffer [confirm]"). Ensure that your task handles the confirmation appropriately. Register and print the results of the task to stdout. Remember that "prompt" takes a regular expression so you either need to simplify it or backslash escape special regex characters (I strongly recommend you simplify your pattern to avoid regular expression characters, if possible).
+4. Create a Playbook that clears the logging buffer on the cisco6 device. The command to clear the logging buffer is: "clear logging". This command will prompt for confirmation ("Clear logging buffer [confirm]"). Ensure that your task handles the confirmation appropriately. Register and print the results of the task to stdout. Remember that "prompt" takes a regular expression so you either need to simplify it or backslash escape special regex characters (I strongly recommend you simplify your pattern to avoid regular expression characters, if possible).
 
 
-5a. Create another Playbook that operates against the juniper group. Using the "junos_command" module, run the "show interfaces terse" command and store the output of this in a variable named "interfaces". Use the debug module to print this variable to stdout (to inspect it).
+5. 'junos_command' module and string methods/manipulation
 
-5b. By using "stdout_lines", access and print out the "fxp0.0" interface information. You can potentially accomplish this by using the below pattern: 
+   a. Create another Playbook that operates against the juniper group. Using the "junos_command" module, run the "show interfaces terse" command and store the output of this in a variable named "interfaces". Use the debug module to print this variable to stdout (to inspect it).
 
-"{{ interfaces['stdout_lines'][0][21] }}"
-Note, it is possible that the index-number "21" might change.
+   b. By using "stdout_lines", access and print out the "fxp0.0" interface information. You can potentially accomplish this by using the below pattern: 
+
+    "{{ interfaces['stdout_lines'][0][21] }}"
+    Note, it is possible that the index-number "21" might change.
 
 Note2, there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
 
 Your output should look similar to the following (i.e. it should contain the devices IP address on the 172.30.0.0/24 network). 
 
-TASK [debug] **********************************************
-ok: [vmx1] => {
-    "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
-}
-ok: [vmx2] => {
-    "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
-}
+    TASK [debug] **********************************************
+    ok: [vmx1] => {
+        "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
+    }
+    ok: [vmx2] => {
+        "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
+    }
 
-5c. Now how would you extract only the "172.30.0.X/24" from that line? In other words, how would you print out only the following: 
+   c. Now how would you extract only the "172.30.0.X/24" from that line? In other words, how would you print out only the following: 
 
-TASK [debug] *****************************************************
-ok: [vmx1] => {
-    "msg": "Primary IP: 172.30.0.221/24"
-}
-ok: [vmx2] => {
-    "msg": "Primary IP: 172.30.0.156/24"
-}
+    TASK [debug] *****************************************************
+    ok: [vmx1] => {
+        "msg": "Primary IP: 172.30.0.221/24"
+    }
+    ok: [vmx2] => {
+        "msg": "Primary IP: 172.30.0.156/24"
+    }
 
 Reminder, you can execute certain string methods inside Ansible (in a Jinja2 context). For example, you can do: "{{ my_var.split() }}"  to split the string on consecutive white space. This will return a list of words; you can then access the last element of this list by using [-1].
 
 
-6a. Create a Playbook that executes a task against the arista group. Using the "eos_command" module, execute "show ip arp" and register the output. Print this registered output to stdout.
+6. 'eos_command' module and '|json' for structured data output
 
-6b. Add an additional set of tasks to use eos_command to execute "show ip arp | json". Once again register this output and print it to standard output. For the "show ip arp | json" output is a string returned or is structured data returned?
+   a. Create a Playbook that executes a task against the arista group. Using the "eos_command" module, execute "show ip arp" and register the output. Print this registered output to stdout.
+
+   b. Add an additional set of tasks to use eos_command to execute "show ip arp | json". Once again register this output and print it to standard output. For the "show ip arp | json" output is a string returned or is structured data returned?
 
 --------------------------------------------------------------------------------
 
@@ -901,28 +911,33 @@ In a real dynamic  inventory scenario, you would be pulling the device and group
 
 When your script is done, the output of "ansible-inventory --graph -i ./your_inv_script.py" should look as follows: 
 
-$ ansible-inventory --graph -i ./dyn_inv.py 
-@all:
-  |--@arista:
-  |  |--arista5
-  |  |--arista6
-  |  |--arista7
-  |  |--arista8
-  |--@cisco:
-  |  |--cisco1
-  |  |--cisco2
-  |  |--cisco5
-  |  |--cisco6
-  |--@juniper:
-  |  |--vmx1
-  |  |--vmx2
-  |--@local:
-  |  |--localhost
-  |--@nxos:
-  |  |--nxos1
+   $ ansible-inventory --graph -i ./dyn_inv.py 
 
-  |  |--nxos2
-  |--@ungrouped:
+   all:
+     l---arista:
+     l  l--arista5
+     l  l--arista6
+     l  l--arista7
+     l  l--arista8
+     l
+     l---cisco:
+     l  l--cisco1
+     l  l--cisco2
+     l  l--cisco5
+     l  l--cisco6
+     l
+     l---juniper:
+     l  l--vmx1
+     l  l--vmx2
+     l
+     l---local:
+     l  l--localhost
+     l
+     l---nxos:
+     l  l--nxos1
+     l  l--nxos2
+     l
+     l--@ungrouped:
 
 --------------------------------------------------------------------------------
 
