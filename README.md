@@ -521,25 +521,25 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
 3. Use the nxos_l3_interfaces resource module to configure an IP address on Ethernet1/4 on both NX-OS switches. The interface name (Ethernet1/4), the IP address, and the netmask should be stored in host_vars. You should be using the "merged" state for this operation. If "Ethernet1/4" is being used by another student, then you can use either "Ethernet1/3" or "Ethernet1/2". For IP network, choose a random /24 network from the 10.227.X.X range. Use 10.227.X.1 for nxos1 and 10.227.X.2 for nxos2.
 
-After configuring the interfaces, use the net_ping module to verify IP connectivity between the two NX-OS switches. Using an assert statement(s) in your playbook, verify the ping worked correctly (>=80% of the ping responses should be returned).
+   After configuring the interfaces, use the net_ping module to verify IP connectivity between the two NX-OS switches. Using an assert statement(s) in your playbook, verify the ping worked correctly (>=80% of the ping responses should be returned).
 
 
 4. Use the eos_vlans resource module to create a VLAN and to assign the VLAN a name on all four of the Arista switches. The VLAN ID should be in the VLAN range from VLAN 200 to 299.
 
-After this VLAN is created, then use the eos_l2_interfaces resource module to assign that VLAN to one of the interfaces on all four of the Arista switches. You should either Ethernet5, Ethernet6, or Ethernet7 (do NOT use Ethernet1). Your VLAN ID, VLAN name, and interface name should be stored in either host_vars or group_vars.
+   After this VLAN is created, then use the eos_l2_interfaces resource module to assign that VLAN to one of the interfaces on all four of the Arista switches. You should either Ethernet5, Ethernet6, or Ethernet7 (do NOT use Ethernet1). Your VLAN ID, VLAN name, and interface name should be stored in either host_vars or group_vars.
 
-Using eos_command and a show command(s), verify that your VLAN exists and that the Ethernet interface you chose was assigned to that interface (I used "show vlan | json"). This verification will probably require that you use an assert statements.
+   Using eos_command and a show command(s), verify that your VLAN exists and that the Ethernet interface you chose was assigned to that interface (I used "show vlan | json"). This verification will probably require that you use an assert statements.
 
 
 5. Use the nxos_interfaces resource module to configure "Ethernet1/3" on both nxos1 and nxos2 as a layer2 port (i.e. configure "switchport" on that interface). If "Ethernet1/3" is being used by another student then use either "Ethernet1/1" or "Ethernet1/2" instead.
 
-Use the l2_interface module to configure the port for trunking ("switchport mode trunk). Note, this is the Ansible issue that requires us to use the deprecated feature module instead of using the newer resources module.
+   - Use the l2_interface module to configure the port for trunking ("switchport mode trunk). Note, this is the Ansible issue that requires us to use the deprecated feature module instead of using the newer resources module.
 
-Using the l2_interfaces resource module configure the trunk native VLAN to VLAN4. Yes, it is ugly to use both "l2_interface" and "l2_interfaces", but I wanted you to get more experience with the resource modules.
+   - Using the l2_interfaces resource module configure the trunk native VLAN to VLAN4. Yes, it is ugly to use both "l2_interface" and "l2_interfaces", but I wanted you to get more experience with the resource modules.
 
-Using the nxos_command module execute a show command on the switches and capture that output. Use this output and the Ansible assert module to verify that the interface is trunking and that the native VLAN is correct. I used 'show interface {{ intf_name }} trunk | json' for my show command.
+   - Using the nxos_command module execute a show command on the switches and capture that output. Use this output and the Ansible assert module to verify that the interface is trunking and that the native VLAN is correct. I used 'show interface {{ intf_name }} trunk | json' for my show command.
 
-The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should NOT be hard-coded into your Ansible playbook.
+   - The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should NOT be hard-coded into your Ansible playbook.
 
 --------------------------------------------------------------------------------
 
@@ -561,78 +561,79 @@ The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan 
 
 1. Configure the following items on all of the lab network devices (4 x Cisco IOS/IOS-XE devices, 4 x Arista devices, 2 x NX-OS devices, and 2 x Juniper vMX devices): 
 
----
-ntp_server1: 130.126.24.24
-ntp_server2: 152.2.21.1
-domain_name: bogus.com
-dns_server1: 8.8.8.8
-dns_server2: 8.8.4.4
+    ntp_server1: 130.126.24.24
+    ntp_server2: 152.2.21.1
+    domain_name: bogus.com
+    dns_server1: 8.8.8.8
+    dns_server2: 8.8.4.4
 
-The above variables should all be stored in group_vars or host_vars. You can use the following templates as a reference for the particular CLI syntax for each platform.
+   The above variables should all be stored in group_vars or host_vars. You can use the following templates as a reference for the particular CLI syntax for each platform.
 
-Configuration templates
+   Configuration templates:
 
-Your playbook should be idempotent for all the devices. Additionally, you should use the ios_config, eos_config, nxos_config, and junos_config modules to accomplish this task.
+   Your playbook should be idempotent for all the devices. Additionally, you should use the ios_config, eos_config, nxos_config, and junos_config modules to accomplish this task.
 
 
 2. Repeat exercise1 except now use the "cli_config" module for all of the devices (instead of ios_config, eos_config, nxos_config, and junos_config). Once again your final playbook should be idempotent.
 
-Note, I had to specify "ansible_connection: network_cli" for the Juniper vMXs as the cli_config module requires network_cli.
+   Note, I had to specify "ansible_connection: network_cli" for the Juniper vMXs as the cli_config module requires network_cli.
 
 
-3a. Using the ios_config module and the configuration hierarchy arguments (for exampe: parents, before, match, replace) configure a ten-line access-list on the cisco5 and cisco6 devices. Here is an example ACL you could use: 
+3. Using Hierarchy Argurments to Add and Re-Order ACL's
 
-ip access-list extended TEST-ANSIBLE1
- permit ip host 10.1.1.1 any
- permit ip host 10.1.1.2 any
- permit ip host 10.1.1.3 any
- permit ip host 10.1.1.4 any
- permit ip host 10.1.1.5 any
- permit ip host 10.1.1.6 any
- permit ip host 10.1.1.7 any
- permit ip host 10.1.1.8 any
- permit ip host 10.1.1.9 any
- permit ip host 10.1.1.10 any
+   a. Using the ios_config module and the configuration hierarchy arguments (for exampe: parents, before, match, replace) configure a ten-line access-list on the cisco5 and cisco6 devices. Here is an example ACL you could use: 
 
-Use the ios_command module to verify that the ACL is configured (basically execute: "show access-list <ACL-NAME>" and then use the debug module to print out the ACL).
+    ip access-list extended TEST-ANSIBLE1
+     permit ip host 10.1.1.1 any
+     permit ip host 10.1.1.2 any
+     permit ip host 10.1.1.3 any
+     permit ip host 10.1.1.4 any
+     permit ip host 10.1.1.5 any
+     permit ip host 10.1.1.6 any
+     permit ip host 10.1.1.7 any
+     permit ip host 10.1.1.8 any
+     permit ip host 10.1.1.9 any
+     permit ip host 10.1.1.10 any
 
-Your playbook should be idempotent.
+   Use the ios_command module to verify that the ACL is configured (basically execute: "show access-list <ACL-NAME>" and then use the debug module to print out the ACL).
+
+   Your playbook should be idempotent.
 
 
-3b. Re-order your access-list such that one of the last three access-list lines is now at the beginning. Additionally convert this moved ACL entry from being a "permit" statement to being a "deny" statement. Ensure that executing your new playbook results in the correct final access-list being configured. For example, my new access-list would look as follows: 
+   b. Re-order your access-list such that one of the last three access-list lines is now at the beginning. Additionally convert this moved ACL entry from being a "permit" statement to being a "deny" statement. Ensure that executing your new playbook results in the correct final access-list being configured. For example, my new access-list would look as follows: 
 
-ip access-list extended TEST-ANSIBLE1
- deny   ip host 10.1.1.9 any
- permit ip host 10.1.1.1 any
- permit ip host 10.1.1.2 any
- permit ip host 10.1.1.3 any
- permit ip host 10.1.1.4 any
- permit ip host 10.1.1.5 any
- permit ip host 10.1.1.6 any
- permit ip host 10.1.1.7 any
- permit ip host 10.1.1.8 any
- permit ip host 10.1.1.10 any
+    ip access-list extended TEST-ANSIBLE1
+     deny   ip host 10.1.1.9 any
+     permit ip host 10.1.1.1 any
+     permit ip host 10.1.1.2 any
+     permit ip host 10.1.1.3 any
+     permit ip host 10.1.1.4 any
+     permit ip host 10.1.1.5 any
+     permit ip host 10.1.1.6 any
+     permit ip host 10.1.1.7 any
+     permit ip host 10.1.1.8 any
+     permit ip host 10.1.1.10 any
 
-Once again use the "ios_command" module and the "debug" module to verify that your updated ACL is properly configured.
+   Once again use the "ios_command" module and the "debug" module to verify that your updated ACL is properly configured.
 
-Your playbook should be idempotent.
+   Your playbook should be idempotent.
 
 
 4. Using the configurations generated from class3-exercise5 configure both BGP and the relevant interface on both nxos1 and nxos2.
 
-In other words, class3-exercise5 was an exercise where we used Jinja2 to generate both BGP and interface configurations for nxos1 and nxos2, BUT we did not deploy those configurations. Now you should use nxos_config module to deploy those configurations.
+   In other words, class3-exercise5 was an exercise where we used Jinja2 to generate both BGP and interface configurations for nxos1 and nxos2, BUT we did not deploy those configurations. Now you should use nxos_config module to deploy those configurations.
 
-Verify the BGP session reached the established using the nxos_command module. For this verification task, you can simply execute "show ip bgp summary" using nxos_command and visually verify its output using the "debug" module.
+   Verify the BGP session reached the established using the nxos_command module. For this verification task, you can simply execute "show ip bgp summary" using nxos_command and visually verify its output using the "debug" module.
 
 
 5. Using an SSH key for authentication, execute the "show users" command on both cisco1 and cisco2. You should use the ios_command module to accomplish this. Remember for this exercise that you will need to use the SSH key located here:
 
-ansible_ssh_private_key_file="~/.ssh/student_key"
+    ansible_ssh_private_key_file="~/.ssh/student_key"
 
-Additionally, you will need to switch the "ansible_user" to "student1".
+   Additionally, you will need to switch the "ansible_user" to "student1".
 
 
-Using the "assert" module, verify that "student1" is present in the output of "show users". This will help verify that you are properly using the SSH key and not accidentally connecting using the "pyclass" username/password.
+   Using the "assert" module, verify that "student1" is present in the output of "show users". This will help verify that you are properly using the SSH key and not accidentally connecting using the "pyclass" username/password.
 
 --------------------------------------------------------------------------------
 
