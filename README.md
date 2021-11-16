@@ -898,7 +898,7 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
    b. Repeat the same pattern as exercise4a except this time execute "show version". From this output extract the software version and print it to the screen.
 
-5. 
+5. Use 'regex' to Find, Filter and Extract String Data
 
    a. Execute "show lldp neighbors" on both of the NX-OS devices. Use regular expressions and the regex_findall() filter to extract the following: remote_name, local_interface, remote_interface.
 
