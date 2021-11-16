@@ -978,12 +978,12 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
    Inside Ansible, you should use a loop and the "combine" filter to accomplish this task. You should print your final data structure to the screen as part of your playbook. Your final data structure should look similar to the following (this is only showing nxos1): 
 
-    "lldp_map": {
-        "Eth1/1": "nxos2.lasthop.io",
-        "Eth1/2": "nxos2.lasthop.io",
-        "Eth1/3": "nxos2.lasthop.io",
-        "Eth1/4": "nxos2.lasthop.io"
-    }
+       "lldp_map": {
+           "Eth1/1": "nxos2.lasthop.io",
+           "Eth1/2": "nxos2.lasthop.io",
+           "Eth1/3": "nxos2.lasthop.io",
+           "Eth1/4": "nxos2.lasthop.io"
+       }
 
 2. Create a custom Ansible inventory for the Arista devices that does ***NOT*** contain either the ansible_user or the ansible_ssh_pass.
 
@@ -1003,15 +1003,15 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 5. Configure the following VLANs on nxos1 and nxos2 (use the nxos_vlans module to accomplish this): 
 
        nxos1
-       \- vlan_id: 100
+       \\- vlan_id: 100
          name: blue100
-       \- vlan_id: 101
+       \\- vlan_id: 101
          name: blue101
        
        nxos2
-       \- vlan_id: 200
+       \\- vlan_id: 200
          name: blue200
-       \- vlan_id: 201
+       \\- vlan_id: 201
          name: blue201
 
    In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
@@ -1040,7 +1040,7 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
 7. Create a new directory for exercise7 and in this directory create the following sub-directories and files:
 
-$ cat ./group_vars/arista/dns.yml
+       $ cat ./group_vars/arista/dns.yml
 
        domain_name: bogus.com
        dns_server1: 8.8.8.8
@@ -1066,16 +1066,16 @@ $ cat ./group_vars/arista/dns.yml
 
    Verify your playbook executes properly and the two specified variables from group_vars are printed out to standard output.
  
-       - Using 'ansible-vault encrypt', encrypt the two YAML files in group_vars. Verify the two files are in fact encrypted by looking at the files. Verify your playbook still executes properly when using the '--ask-vault-pass' command-line argument.
-       - Create a file named ".my_vault" in the same directory as your playbook. Store your vault password in this file. Using this file and the "--vault-password-file .my_vault" command-line argument, verify your playbook still executes properly.
-       - Use 'ansible-vault view' to view the dns.yml file. You should be able to see the clear-text contents of this file.
-       - Configure the following in your ~/.ansible.cfg file:
+   - Using 'ansible-vault encrypt', encrypt the two YAML files in group_vars. Verify the two files are in fact encrypted by looking at the files. Verify your playbook still executes properly when using the '--ask-vault-pass' command-line argument.
+   - Create a file named ".my_vault" in the same directory as your playbook. Store your vault password in this file. Using this file and the "--vault-password-file .my_vault" command-line argument, verify your playbook still executes properly.
+   - Use 'ansible-vault view' to view the dns.yml file. You should be able to see the clear-text contents of this file.
+   - Configure the following in your ~/.ansible.cfg file:
 
        vault_password_file = /path/to/.my_vault
 
-       After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
+   After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
 
-       - Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
+   - Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
 
 --------------------------------------------------------------------------------
 
