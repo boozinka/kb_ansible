@@ -945,7 +945,7 @@ You can see in the output that the debug task with the "test1" tag did in fact e
          l  l--nxos1
          l  l--nxos2
          l
-         l--@ungrouped:
+         l---ungrouped:
 
 --------------------------------------------------------------------------------
 
@@ -987,14 +987,14 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
 2. Create a custom Ansible inventory for the Arista devices that does ***NOT*** contain either the ansible_user or the ansible_ssh_pass.
 
-Create an Ansible playbook. In this playbook, create variables for both 'ansible_ssh_pass' and for 'ansible_user'. The 'ansible_ssh_pass' variable should be set using a "lookup" and the ANSIBLE_PASSWORD environment variable (this environment variable should already be set in the lab environment). In other words, you should not hard-code the password in the playbook; instead you should be reading it from the referenced environment variable.
+   Create an Ansible playbook. In this playbook, create variables for both 'ansible_ssh_pass' and for 'ansible_user'. The 'ansible_ssh_pass' variable should be set using a "lookup" and the ANSIBLE_PASSWORD environment variable (this environment variable should already be set in the lab environment). In other words, you should not hard-code the password in the playbook; instead you should be reading it from the referenced environment variable.
 
-Your playbook should successfully execute the "show vlan" command on all of the remote Arista devices using the eos_command module (use the "-i new_inventory_file.ini" to use the new inventory file you created). Print the returned output from "show vlan" to the screen to verify the playbook executed correctly.
+   Your playbook should successfully execute the "show vlan" command on all of the remote Arista devices using the eos_command module (use the "-i new_inventory_file.ini" to use the new inventory file you created). Print the returned output from "show vlan" to the screen to verify the playbook executed correctly.
 
 
 3. On the four Arista switches create a playbook that retrieves the switching table using 'pipe json' (i.e. 'show mac address-table | json'). From this output, convert the returned data structure to a dictionary. This new dictionary should use the mac-addresses as the keys and the source interfaces as the values (i.e. for a given mac-address the corresponding value should be the interface that this mac-address originated on).
 
-You should accomplish this data structure conversion using 'map-attribute', 'zip', and then casting as a 'dict'. For each Arista switch, print the resulting dictionary to standard output.
+   You should accomplish this data structure conversion using 'map-attribute', 'zip', and then casting as a 'dict'. For each Arista switch, print the resulting dictionary to standard output.
 
 
 4. Using the four Arista switches and the same 'show mac address-table | json' command, create a playbook that creates a list of all of the mac-addresses in the switching table (for each switch). In order to do this, you should use list concatenation and a loop.
@@ -1002,77 +1002,80 @@ You should accomplish this data structure conversion using 'map-attribute', 'zip
 
 5. Configure the following VLANs on nxos1 and nxos2 (use the nxos_vlans module to accomplish this): 
 
-nxos1
-- vlan_id: 100
-  name: blue100
-- vlan_id: 101
-  name: blue101
+       nxos1
+       \- vlan_id: 100
+         name: blue100
+       \- vlan_id: 101
+         name: blue101
+       
+       nxos2
+       \- vlan_id: 200
+         name: blue200
+       \- vlan_id: 201
+         name: blue201
 
-nxos2
-- vlan_id: 200
-  name: blue200
-- vlan_id: 201
-  name: blue201
-In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
+   In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
 
-a. Uses the nxos_command module to execute "show vlan | json" and records this output.
-b. Uses Ansible set filters to determine the common VLANs that are configured on both nxos1 and nxos2. Print these common VLANs to standard output.
-c. Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
-d. Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
+       - Uses the nxos_command module to execute "show vlan | json" and records this output.
+       - Uses Ansible set filters to determine the common VLANs that are configured on both nxos1 and nxos2. Print these common VLANs to standard output.
+       - Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
+       - Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
 
-***Note***, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
+   ***Note***, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
 
 6. Exercise6 contains a set of playbooks (exercise6a.yml through exercise6g.yml). For reference, see the exercise directory here.
 
-Each of these playbooks will fail (i.e. not execute properly). You should "git clone" this repository to your lab environment (or otherwise copy the six playbooks; you will also need to copy any of the TextFSM templates located in that exercise6 directory).
+   Each of these playbooks will fail (i.e. not execute properly). You should "git clone" this repository to your lab environment (or otherwise copy the six playbooks; you will also need to copy any of the TextFSM templates located in that exercise6 directory).
 
-Your job for each of these playbooks is to find and correct the error in each playbook. 
+   Your job for each of these playbooks is to find and correct the error in each playbook. 
 
-In general, the playbook should only contain one error. ***Note***, the error may or may not result in an actual Ansible execution failure (i.e. ansible-playbook detecting the task as failed and stopping execution). Or worded differently, a couple of the playbooks execute successfully from an Ansible perspective, but do not do what they are supposed to do.
+   In general, the playbook should only contain one error. ***Note***, the error may or may not result in an actual Ansible execution failure (i.e. ansible-playbook detecting the task as failed and stopping execution). Or worded differently, a couple of the playbooks execute successfully from an Ansible perspective, but do not do what they are supposed to do.
 
-You should try to fix each one of these playbooks on your own.
+   You should try to fix each one of these playbooks on your own.
 
-For reference, there is also a solutions directory where I have created a "fixed" version of each playbook. You can do a diff between the failing and fixed playbook to see the exact issue (but once again try to solve them yourself).
+   For reference, there is also a solutions directory where I have created a "fixed" version of each playbook. You can do a diff between the failing and fixed playbook to see the exact issue (but once again try to solve them yourself).
 
-# How to diff exercise6a
-$ diff exercise6a.yml solutions/exercise6a_fixed.yml 
+       # How to diff exercise6a
+       $ diff exercise6a.yml solutions/exercise6a_fixed.yml 
 
 7. Create a new directory for exercise7 and in this directory create the following sub-directories and files:
 
 $ cat ./group_vars/arista/dns.yml
----
-domain_name: bogus.com
-dns_server1: 8.8.8.8
-dns_server2: 8.8.4.4
 
-$ cat ./group_vars/arista/ntp.yml
----
-ntp_server1: 130.126.24.24
-ntp_server2: 152.2.21.1
+       domain_name: bogus.com
+       dns_server1: 8.8.8.8
+       dns_server2: 8.8.4.4
+       
+       $ cat ./group_vars/arista/ntp.yml
 
-Also create the following playbook:
+       ntp_server1: 130.126.24.24
+       ntp_server2: 152.2.21.1
 
----
-- name: Exercise7
-  hosts: arista
-  gather_facts: False
-  tasks:
-    - debug:
-        var: ntp_server1
+   Also create the following playbook:
 
-    - debug:
-        var: domain_name
 
-Verify your playbook executes properly and the two specified variables from group_vars are printed out to standard output.
+       - name: Exercise7
+         hosts: arista
+         gather_facts: False
+         tasks:
+           - debug:
+               var: ntp_server1
+       
+           - debug:
+               var: domain_name
+
+   Verify your playbook executes properly and the two specified variables from group_vars are printed out to standard output.
  
-a. Using 'ansible-vault encrypt', encrypt the two YAML files in group_vars. Verify the two files are in fact encrypted by looking at the files. Verify your playbook still executes properly when using the '--ask-vault-pass' command-line argument.
-b. Create a file named ".my_vault" in the same directory as your playbook. Store your vault password in this file. Using this file and the "--vault-password-file .my_vault" command-line argument, verify your playbook still executes properly.
-c. Use 'ansible-vault view' to view the dns.yml file. You should be able to see the clear-text contents of this file.
-d. Configure the following in your ~/.ansible.cfg file:
+       - Using 'ansible-vault encrypt', encrypt the two YAML files in group_vars. Verify the two files are in fact encrypted by looking at the files. Verify your playbook still executes properly when using the '--ask-vault-pass' command-line argument.
+       - Create a file named ".my_vault" in the same directory as your playbook. Store your vault password in this file. Using this file and the "--vault-password-file .my_vault" command-line argument, verify your playbook still executes properly.
+       - Use 'ansible-vault view' to view the dns.yml file. You should be able to see the clear-text contents of this file.
+       - Configure the following in your ~/.ansible.cfg file:
 
-vault_password_file = /path/to/.my_vault
-After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
-e. Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
+       vault_password_file = /path/to/.my_vault
+
+       After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
+
+       - Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
 
 --------------------------------------------------------------------------------
 
@@ -1095,118 +1098,120 @@ e. Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml f
 
 1. Use "napalm_get_facts" and the get_config() method (filter: config) to retrieve the running configuration from all of the devices in the lab environment. Save the running configurations using the following directory structure: 
 
-./BUP/
-|-- eos
-|  |-- arista5.txt
-|  |-- arista6.txt
-|  |-- arista7.txt
-|  |-- arista8.txt
-|-- ios
-|  |-- cisco1.txt
-|  |-- cisco2.txt
-|  |-- cisco5.txt
-|  |-- cisco6.txt
-|-- junos
-|  |-- vmx1.txt
-|  |-- vmx2.txt
-|-- nxos
-    |-- nxos1.txt
-    |-- nxos2.txt
+       ./BUP/
+       l-- eos
+       l  l-- arista5.txt
+       l  l-- arista6.txt
+       l  l-- arista7.txt
+       l  l-- arista8.txt
+       l
+       l-- ios
+       l  l-- cisco1.txt
+       l  l-- cisco2.txt
+       l  l-- cisco5.txt
+       l  l-- cisco6.txt
+       l
+       l-- junos
+       l  l-- vmx1.txt
+       l  l-- vmx2.txt
+       l
+       l-- nxos
+           l-- nxos1.txt
+           l-- nxos2.txt
 
-Your playbook should automatically create the "BUP" sub-directory and the "BUP/{{ ansible_network_os }}" sub-directory (if they do not exist). Use the Ansible "file" module to accomplish this.
+   Your playbook should automatically create the "BUP" sub-directory and the "BUP/{{ ansible_network_os }}" sub-directory (if they do not exist). Use the Ansible "file" module to accomplish this.
 
 
 2. Use napalm_get_facts and the "get_lldp_neighbors()" method (filter: lldp_neighbors) to retrieve the LLDP neighbors from all of the Arista and Cisco IOS/IOS-XE devices.
 
-Reformat the retrieved data to print out the following table to standard output (in a somewhat readable way). ***Note***, you might need to use the "stdout_callback = debug" to accomplish this (i.e. to make the output somewhat readable): 
+   Reformat the retrieved data to print out the following table to standard output (in a somewhat readable way). ***Note***, you might need to use the "stdout_callback = debug" to accomplish this (i.e. to make the output somewhat readable): 
 
-********* LLDP table for (cisco6) ********
-GigabitEthernet2: cisco5
-GigabitEthernet3: cisco5
-GigabitEthernet4: cisco5
-GigabitEthernet5: cisco5
-GigabitEthernet6: cisco5
-GigabitEthernet7: cisco5
+       ********* LLDP table for (cisco6) ********
+       GigabitEthernet2: cisco5
+       GigabitEthernet3: cisco5
+       GigabitEthernet4: cisco5
+       GigabitEthernet5: cisco5
+       GigabitEthernet6: cisco5
+       GigabitEthernet7: cisco5
 
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-The first entry should be the local interface and the second entry should be the remote peer that is visible via that interface. You should clearly indicate which device the LLDP data was retrieved from.
+   The first entry should be the local interface and the second entry should be the remote peer that is visible via that interface. You should clearly indicate which device the LLDP data was retrieved from.
 
-This exercise will likely require that you loop through the data and use string concatenation to generate one large string (per device). You will subsequently output this string to the screen.
+   This exercise will likely require that you loop through the data and use string concatenation to generate one large string (per device). You will subsequently output this string to the screen.
 
 
 3. Use Jinja2 templating to generate the following VLAN and interface configurations:
 
-VLAN Config 
+   VLAN Config:
 
-vlan 202
-   name blue202
-!
-vlan 203
-   name blue203
-!
-vlan 204
-   name blue204
-!
-vlan 205
-   name blue205
-!
-vlan 206
-   name blue206
-!
-vlan 207
-   name blue207
+       vlan 202
+          name blue202
+       !
+       vlan 203
+          name blue203
+       !
+       vlan 204
+          name blue204
+       !
+       vlan 205
+          name blue205
+       !
+       vlan 206
+          name blue206
+       !
+       vlan 207
+          name blue207
+       
+       interface configuration 
+       
+       interface Ethernet2
+          switchport access vlan 202
+       !
+       interface Ethernet3
+          switchport access vlan 203
+       !
+       interface Ethernet4
+          switchport access vlan 204
+       !
+       interface Ethernet5
+          switchport access vlan 205
+       !
+       interface Ethernet6
+          switchport access vlan 206
+       !
+       interface Ethernet7
+          switchport access vlan 207
 
-interface configuration 
+   All of the relevant VLAN IDs and VLAN names should be stored in group_vars. All of the interface to VLAN assignment should also be stored in group_vars (i.e. which interface is assigned to which VLAN).
 
-interface Ethernet2
-   switchport access vlan 202
-!
-interface Ethernet3
-   switchport access vlan 203
-!
-interface Ethernet4
-   switchport access vlan 204
-!
-interface Ethernet5
-   switchport access vlan 205
-!
-interface Ethernet6
-   switchport access vlan 206
-!
-interface Ethernet7
-   switchport access vlan 207
+   Use napalm-ansible and the "napalm_install_config" module (merge-operation) to deploy this configuration to the "arista5" switch. Validate your configuration changes before committing them by generating and reviewing a "diff" file of the pending changes.
 
-All of the relevant VLAN IDs and VLAN names should be stored in group_vars. All of the interface to VLAN assignment should also be stored in group_vars (i.e. which interface is assigned to which VLAN).
-
-Use napalm-ansible and the "napalm_install_config" module (merge-operation) to deploy this configuration to the "arista5" switch. Validate your configuration changes before committing them by generating and reviewing a "diff" file of the pending changes.
-
-Do ***NOT*** change the Ethernet1 interface as this interface is needed for management access to the device.
+   Do ***NOT*** change the Ethernet1 interface as this interface is needed for management access to the device.
 
 
 4. Repeat the BGP configuration exercise from class7, exercise1 using napalm-ansible.
 
-Your updated solution should use "napalm_install_config" to install the configuration changes (merge operation).
+   Your updated solution should use "napalm_install_config" to install the configuration changes (merge operation).
 
-Additionally, use "napalm_get_facts" and the "get_bgp_neighbors()" method (filter: bgp_neighbors) to verify that the BGP peers reach an established state ("is_up" key in the NAPALM returned data). Additionally, verify each peer is receiving two prefixes.
+   Additionally, use "napalm_get_facts" and the "get_bgp_neighbors()" method (filter: bgp_neighbors) to verify that the BGP peers reach an established state ("is_up" key in the NAPALM returned data). Additionally, verify each peer is receiving two prefixes.
 
-You should use Ansible tags in your playbook to create three separate phases: build, deploy, and verify. The build phase should handle all of the configuration generation. The deploy phase should push the configuration to the devices. The verify phase should ensure the BGP relationship reaches the correct state.
+   You should use Ansible tags in your playbook to create three separate phases: build, deploy, and verify. The build phase should handle all of the configuration generation. The deploy phase should push the configuration to the devices. The verify phase should ensure the BGP relationship reaches the correct state.
 
-Use the NAPALM "nxos_ssh" driver to accomplish this exercise (add the argument "dev_os: nxos_ssh" to the NAPALM tasks).
+   Use the NAPALM "nxos_ssh" driver to accomplish this exercise (add the argument "dev_os: nxos_ssh" to the NAPALM tasks).
 
 
 5. Repeat the VLAN and interface configuration specified in exercise3 except using full configuration replace.
 
-In order to accomplish this, you should use Ansible to retrieve the running configuration from Arista5. You should use this running-configuration as the basis for your Jinja2 template. Your Jinja2 template should use "include" statements to bring in both the interface configuration and the VLAN configuration (from external templates).
+   In order to accomplish this, you should use Ansible to retrieve the running configuration from Arista5. You should use this running-configuration as the basis for your Jinja2 template. Your Jinja2 template should use "include" statements to bring in both the interface configuration and the VLAN configuration (from external templates).
 
-Once again all of your new VLAN IDs and VLAN names should be stored in group_vars. Similarly, the interfaces to VLAN ID mappings should also be stored in group_vars.
+   Once again all of your new VLAN IDs and VLAN names should be stored in group_vars. Similarly, the interfaces to VLAN ID mappings should also be stored in group_vars.
 
-***Note***, do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
+   ***Note***, do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
 
-At the end of the templating process, you should be generating an entire configuration that you can deploy to Arista5.
+   At the end of the templating process, you should be generating an entire configuration that you can deploy to Arista5.
 
-Next, use "napalm_install_config (replace) to deploy this configuration to the device. Once again, verify your changes will work before you deploying them by generating a "diff" and reviewing it.
+   Next, use "napalm_install_config (replace) to deploy this configuration to the device. Once again, verify your changes will work before you deploying them by generating a "diff" and reviewing it.
 
-Your configuration changes should only modify the arista5 switch.
+   Your configuration changes should only modify the arista5 switch.
 
 --------------------------------------------------------------------------------
 
@@ -1230,54 +1235,55 @@ Your configuration changes should only modify the arista5 switch.
 
 1. Create three custom filter plugins named: filter1, filter2, and filter3.
 
-The first filter plugin should convert a string to upper-case using Python's .upper() method. The second filter plugin should convert a string to lower-case using Python's .lower() method. The third filter plugin should use Python's .capitalize() method to capitalize the first letter of the string.
+   The first filter plugin should convert a string to upper-case using Python's .upper() method. The second filter plugin should convert a string to lower-case using Python's .lower() method. The third filter plugin should use Python's .capitalize() method to capitalize the first letter of the string.
 
-Construct an Ansible playbook that uses each of these three filters and verify that they each work properly.
+   Construct an Ansible playbook that uses each of these three filters and verify that they each work properly.
 
 
 2. Create a filter plugin that processes the "show ip arp" output from the Arista switches. The filter plugin should take the ARP output as a string and return the list of MAC addresses that are present in the ARP output.
 
-Construct an Ansible playbook that retrieves "show ip arp" from all of the Arista switches. Process this ARP output through the new filter and verify that the list of MAC addresses is being properly returned.
+   Construct an Ansible playbook that retrieves "show ip arp" from all of the Arista switches. Process this ARP output through the new filter and verify that the list of MAC addresses is being properly returned.
 
 
 3. Create a filter plugin that processes the "show ip arp" output from the four Cisco IOS/IOS-XE routers. The filter plugin should take the ARP output as a string and return a dictionary where the key is the IP address and the value is the MAC address.
 
-Construct an Ansible playbook that retrieves "show ip arp" from the four Cisco IOS/IOS-XE routers. Process this ARP output through the new filter and verify that the new dictionary is properly returned for each device.
+   Construct an Ansible playbook that retrieves "show ip arp" from the four Cisco IOS/IOS-XE routers. Process this ARP output through the new filter and verify that the new dictionary is properly returned for each device.
 
 
 4. Create an Ansible module that takes one argument named "my_string". This argument is a string and is required. The module should take the string and convert it to upper case and should return it the "output" field of the results.
 
-Construct an Ansible playbook that uses this new module and verify that the module operates properly. Inspect the output using "-vvv". Ensure you see the "output" field and ensure that your original string has been converted to upper case.
+   Construct an Ansible playbook that uses this new module and verify that the module operates properly. Inspect the output using "-vvv". Ensure you see the "output" field and ensure that your original string has been converted to upper case.
 
 
 5. Create an Ansible module that takes five arguments: host, device_type, username, password, and config_list. Each of these arguments should be a string except for config_list which is a list. The "password" argument should use "no_log=True".
 
-Using these arguments establish a Netmiko SSH connection inside the new Ansible module. Additionally, use the Netmiko send_config_set() method to send the configuration commands specified in "config_list" to the remote device. The syntax for this method should be similar to the following: 
+   Using these arguments establish a Netmiko SSH connection inside the new Ansible module. Additionally, use the Netmiko send_config_set() method to send the configuration commands specified in "config_list" to the remote device. The syntax for this method should be similar to the following: 
 
-# net_connect is the Netmiko connection object 
-# created by using ConnectHandler
-output = net_connect.send_config_set(config_list)
+       # net_connect is the Netmiko connection object 
+       # created by using ConnectHandler
+       output = net_connect.send_config_set(config_list)
 
-Return the "output" from this command in the "output" field of the Ansible results. Also set the "changed" flag to True (if configuration changes were made).
+   Return the "output" from this command in the "output" field of the Ansible results. Also set the "changed" flag to True (if configuration changes were made).
 
-Next, construct an Ansible playbook that uses this new module. This new module should make the following two configuration changes on the "cisco1" router: 
+   Next, construct an Ansible playbook that uses this new module. This new module should make the following two configuration changes on the "cisco1" router: 
 
         config_list:
           - logging buffered 20000
           - no logging console
-Your entire task (in your playbook) should be similar to the following. Do not hard-code the password in the playbook; instead use the "ansible_ssh_pass" variable from inventory. 
+
+   Your entire task (in your playbook) should be similar to the following. Do not hard-code the password in the playbook; instead use the "ansible_ssh_pass" variable from inventory. 
 
 
-    - name: Netmiko configuration changes
-      netmiko_config:
-        host: "{{ ansible_host }}"
-        device_type: cisco_ios
-        username: "{{ ansible_user }}"
-        password: "{{ ansible_ssh_pass }}"
-        config_list:
-          - logging buffered 20000
-          - no logging console
+       - name: Netmiko configuration changes
+         netmiko_config:
+           host: "{{ ansible_host }}"
+           device_type: cisco_ios
+           username: "{{ ansible_user }}"
+           password: "{{ ansible_ssh_pass }}"
+           config_list:
+             - logging buffered 20000
+             - no logging console
 
-Execute your playbook and verify that it works properly. Ensure that the configuration changes were made on the remote device.
+   Execute your playbook and verify that it works properly. Ensure that the configuration changes were made on the remote device.
 
 
