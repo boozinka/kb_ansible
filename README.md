@@ -167,10 +167,10 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
         "ansible_host": "cisco2.lasthop.io"
     }
 
-PLAY RECAP ****************************************************
-cisco1: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
-cisco2: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
-localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+    PLAY RECAP ****************************************************
+    cisco1: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+    cisco2: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+    localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
 --------------------------------------------------------------------------------
 
@@ -210,19 +210,19 @@ localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
    a. Create a new directory that includes a Playbook and a "group_vars" directory. The group_vars directory should contain a "cisco" subdirectory. Inside this "group_vars/cisco" subdirectory, create a file named "bgp.yml". Inside this "bgp.yml" file create a variable for "bgp_asn" and assign it a value between 65000 and 65535. Use the "debug" module to print a message to stdout. The message should look similar to the following: 
 
-    TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-    ok: [cisco1] => {
-        "msg": "The ASN for host cisco1 is 65001"
-    }
-    ok: [cisco5] => {
-        "msg": "The ASN for host cisco5 is 65001"
-    }
-    ok: [cisco2] => {
-        "msg": "The ASN for host cisco2 is 65001"
-    }
-    ok: [cisco6] => {
-        "msg": "The ASN for host cisco6 is 65001"
-    }
+   TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+   ok: [cisco1] => {
+       "msg": "The ASN for host cisco1 is 65001"
+   }
+   ok: [cisco5] => {
+       "msg": "The ASN for host cisco5 is 65001"
+   }
+   ok: [cisco2] => {
+       "msg": "The ASN for host cisco2 is 65001"
+   }
+   ok: [cisco6] => {
+       "msg": "The ASN for host cisco6 is 65001"
+   }
 
    b. Create a "host_vars" directory, and a subdirectory named "cisco5" within it. Inside this, "host_vars/cisco5", create a file named "bgp.yml". Inside this file, create a variable named "bgp_asn" using a different ASN value. Re-run the Playbook. You should observe that the host_vars "bgp_asn" has higher priority than the group_vars "bgp_asn" variable.
 
@@ -232,19 +232,19 @@ Inside the same ciscoX directory, create a second file named "bgp.yml". In this 
 
 Finally, modify your Playbook such that your output looks similar to the following. 
 
-    TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-    ok: [cisco2] => {
-        "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
-    }
-    ok: [cisco1] => {
-        "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
-    }
-    ok: [cisco6] => {
-        "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
-    }
-    ok: [cisco5] => {
-        "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
-    }
+   TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+   ok: [cisco2] => {
+       "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
+   }
+   ok: [cisco1] => {
+       "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
+   }
+   ok: [cisco6] => {
+       "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
+   }
+   ok: [cisco5] => {
+       "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
+   }
 
 The above exercise demonstrates that you can store additional inventory variables in host_vars, and group_vars. These subdirectories also allow you to divide your YAML into multiple files which can simplify inventory management.
 
@@ -269,30 +269,30 @@ The above exercise demonstrates that you can store additional inventory variable
 
    b. By using "stdout_lines", access and print out the "fxp0.0" interface information. You can potentially accomplish this by using the below pattern: 
 
-    "{{ interfaces['stdout_lines'][0][21] }}"
-    Note, it is possible that the index-number "21" might change.
+   "{{ interfaces['stdout_lines'][0][21] }}"
+   Note, it is possible that the index-number "21" might change.
 
 Note2, there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
 
 Your output should look similar to the following (i.e. it should contain the devices IP address on the 172.30.0.0/24 network). 
 
-    TASK [debug] **********************************************
-    ok: [vmx1] => {
-        "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
-    }
-    ok: [vmx2] => {
-        "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
-    }
+   TASK [debug] **********************************************
+   ok: [vmx1] => {
+       "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
+   }
+   ok: [vmx2] => {
+       "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
+   }
 
    c. Now how would you extract only the "172.30.0.X/24" from that line? In other words, how would you print out only the following: 
 
-    TASK [debug] *****************************************************
-    ok: [vmx1] => {
-        "msg": "Primary IP: 172.30.0.221/24"
-    }
-    ok: [vmx2] => {
-        "msg": "Primary IP: 172.30.0.156/24"
-    }
+   TASK [debug] *****************************************************
+   ok: [vmx1] => {
+       "msg": "Primary IP: 172.30.0.221/24"
+   }
+   ok: [vmx2] => {
+       "msg": "Primary IP: 172.30.0.156/24"
+   }
 
 Reminder, you can execute certain string methods inside Ansible (in a Jinja2 context). For example, you can do: "{{ my_var.split() }}"  to split the string on consecutive white space. This will return a list of words; you can then access the last element of this list by using [-1].
 
