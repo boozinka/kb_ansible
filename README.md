@@ -284,9 +284,9 @@ Reminder, you can execute certain string methods inside Ansible (in a Jinja2 con
 
 6b. Add an additional set of tasks to use eos_command to execute "show ip arp | json". Once again register this output and print it to standard output. For the "show ip arp | json" output is a string returned or is structured data returned?
 
+--------------------------------------------------------------------------------
 
-
-Class 3. Conditionals, Loops and Configuration Templating
+## Class 3. Conditionals, Loops and Configuration Templating
 
 - [ ] I.    Class 3 Introduction 
 - [ ] II.   Idempotency 
@@ -304,8 +304,7 @@ Class 3. Conditionals, Loops and Configuration Templating
 - [ ] XIV.  Jinja2 Modular Includes
 
 
-Exercises:
------------
+### Exercises:
 
 1a. Construct an Ansible playbook that contains a single play. The play should execute the following:
 
@@ -473,8 +472,9 @@ One other note, you can use the Ansible assemble module to assemble multiple fil
 
 In a future lesson, we will take these generated configurations and deploy them to nxos1 and nxos2.
 
+--------------------------------------------------------------------------------
 
-Class 4. Making Network Configuration Changes (Basics)
+## Class 4. Making Network Configuration Changes (Basics)
 
 - [ ] I.    Ansible Configuration Overview
 - [ ] II.   Resource Modules
@@ -488,9 +488,7 @@ Class 4. Making Network Configuration Changes (Basics)
 - [ ] X.    Assert
 
 
-Exercises:
------------
-
+### Exercises:
 
 1. Configure a custom login banner on the four Cisco IOS/IOS-XE devices using the ios_banner module. Use a "write mem" handler to automatically save the configuration. This "write mem" handler should only execute if configuration changes were made.
 
@@ -520,8 +518,9 @@ Using the nxos_command module execute a show command on the switches and capture
 
 The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should NOT be hard-coded into your Ansible playbook.
 
+--------------------------------------------------------------------------------
 
-Class 5. Making Network Configuration Changes (Part2)
+## Class 5. Making Network Configuration Changes (Part2)
 
 - [ ] I.    Introduction to platform_config Modules
 - [ ] II.   ios_config
@@ -535,8 +534,7 @@ Class 5. Making Network Configuration Changes (Part2)
 - [ ] X.    Collections*
 
 
-Exercises:
------------
+### Exercises:
 
 1. Configure the following items on all of the lab network devices (4 x Cisco IOS/IOS-XE devices, 4 x Arista devices, 2 x NX-OS devices, and 2 x Juniper vMX devices): 
 
@@ -613,9 +611,9 @@ Additionally, you will need to switch the "ansible_user" to "student1".
 
 Using the "assert" module, verify that "student1" is present in the output of "show users". This will help verify that you are properly using the SSH key and not accidentally connecting using the "pyclass" username/password.
 
+--------------------------------------------------------------------------------
 
-
-Class 6. Imports, Includes, and Roles
+## Class 6. Imports, Includes, and Roles
 
 
  - [ ] I.    Dynamic (include) vs Static (import)
@@ -629,8 +627,7 @@ Class 6. Imports, Includes, and Roles
  - [ ] IX.   Playbook Composition
 
 
-Errata / Clarification:
-------------------------
+### Errata / Clarification:
 
 Expanding on the Ansible tag behavior when using import_tasks or include_tasks
 
@@ -744,8 +741,7 @@ Re-executing our playbook with the "always" tag applied to the "include_tasks" o
 You can see in the output that the debug task with the "test1" tag did in fact execute.
 
 
-Exercises:
------------
+### Exercises:
 
 1a. Create a playbook that runs against localhost. In this playbook, create a task that uses "include_tasks" and loads in an external sub-tasks file named "subtask1.yml". The task in the main playbook should have a loop that loops over four IP addresses. The sub-tasks file should have a "debug" task that prints out the IP address.
 
@@ -794,8 +790,9 @@ interface Loopback99
  ip vrf forwarding red
 --------
 
+--------------------------------------------------------------------------------
 
-Class 7. Parsers and Dynamic Inventory
+## Class 7. Parsers and Dynamic Inventory
 
 
  - [ ] I.    hostvars
@@ -813,8 +810,7 @@ Class 7. Parsers and Dynamic Inventory
  - [ ] XIII. An Inventory Directory
 
 
-Exercises:
------------
+### Exercises:
 
 1. Using class5, exercise4 as a base solution, change this earlier exercise such that you do NOT hard-code the "bgp_peer_ip" in inventory. In other words, in our earlier solution, we had something similar to the following embedded in our inventory: 
 
@@ -919,9 +915,9 @@ $ ansible-inventory --graph -i ./dyn_inv.py
   |  |--nxos2
   |--@ungrouped:
 
+--------------------------------------------------------------------------------
 
-
-Class 8. Additional Ansible Techniques and Debugging
+## Class 8. Additional Ansible Techniques and Debugging
 
 
 - [ ] I.    Lookups
@@ -938,8 +934,7 @@ Class 8. Additional Ansible Techniques and Debugging
 - [ ] XII.  Vault
 
 
-Exercises:
------------
+### Exercises:
 
 1. Use TextFSM and the below ntc-template to retrieve "show lldp neighbors" from the two NX-OS switches:
 
@@ -1047,8 +1042,9 @@ vault_password_file = /path/to/.my_vault
 After making this change, verify your playbook still executes properly, but without you needing to specify any additional command-line arguments.
 e. Execute 'ansible-vault decrypt' to decrypt both the dns.yml and the ntp.yml files. Verify these files are now both clear-text YAML files.
 
+--------------------------------------------------------------------------------
 
-Bonus Lesson 1. - NAPALM-Ansible
+## Bonus Lesson 1. - NAPALM-Ansible
 
  - [ ] I.    NAPALM-Ansible Overview
  - [ ] II.   Installing NAPALM-Ansible
@@ -1063,8 +1059,7 @@ Bonus Lesson 1. - NAPALM-Ansible
  - [ ] XII.  NAPALM and Jinja2 (Part2)
 
 
-Exercises:
-----------
+### Exercises:
 
 1. Use "napalm_get_facts" and the get_config() method (filter: config) to retrieve the running configuration from all of the devices in the lab environment. Save the running configurations using the following directory structure: 
 
@@ -1181,8 +1176,9 @@ Next, use "napalm_install_config (replace) to deploy this configuration to the d
 
 Your configuration changes should only modify the arista5 switch.
 
+--------------------------------------------------------------------------------
 
-Bonus Lesson 2. - OS Upgrade, Creating yourown Filter and Module
+## Bonus Lesson 2. - OS Upgrade, Creating yourown Filter and Module
 
 
  - [ ] I.    OS Upgrade Overview
@@ -1198,8 +1194,7 @@ Bonus Lesson 2. - OS Upgrade, Creating yourown Filter and Module
  - [ ] XII.  Module Creation: Troubleshooting and Documentation
 
 
-Exercises:
-----------
+### Exercises:
 
 1. Create three custom filter plugins named: filter1, filter2, and filter3.
 
