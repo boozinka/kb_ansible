@@ -1,8 +1,8 @@
-Following Kirk Byers Python Ansible Course
+# Following Kirk Byers Python Ansible Course
 
 This course dives into Ansible as applied to Network Engineering.
 
-### Topics covered include:
+## Topics covered include:
 
 - [ ] Class 1 - Ansible Fundamentals
 - [ ] Class 2 - Variables, Modules, Network Fact Gathering
@@ -16,8 +16,9 @@ This course dives into Ansible as applied to Network Engineering.
 - [ ] Bonus Class 1 - NAPALM-Ansible
 - [ ] Bonus Class 2 - OS Upgrade IOS/IOS-XE, Creating your own Filter/Module
 
+--------------------------------------------------------------------------------
 
-Class 1. Ansible Fundamentals
+### Class 1. Ansible Fundamentals
 
 - [ ] I.    Ansible Course Introduction
 - [ ] II.   Course Format
@@ -34,8 +35,7 @@ Class 1. Ansible Fundamentals
 - [ ] XIII. Playbook Structure
 
 
-Exercises:
------------
+#### Exercises:
 
 Note: YAML files allow you to use whatever amount of spacing you wish for indentation (as long as you are consistent). A general recommendation is to use two spaces for indentation for YAML files.
 
@@ -163,9 +163,9 @@ cisco1: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 cisco2: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
+--------------------------------------------------------------------------------
 
-
-Class 2. Modules & Network Fact Gathering
+## Class 2. Modules & Network Fact Gathering
 
 - [ ] I.    Class 2 Introduction
 - [ ] II.   Varibles (Part1)
@@ -182,8 +182,7 @@ Class 2. Modules & Network Fact Gathering
 - [ ] XIII. Privilege Escalation (become/enable)
 
 
-Exercises:
------------
+### Exercises:
 
 1a. Create a Playbook containing a Play that executes on the "arista5" host. Ensure that "gather_facts" is set to True. Create a task that uses the "debug" module to print the "ansible_facts" to stdout. Create a subsequent task that prints just "ansible_facts.net_all_ipv4_addresses" to stdout.
 
