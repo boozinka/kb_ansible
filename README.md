@@ -65,16 +65,16 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
    a. Create an "INI" style inventory file. This file should have an "all:vars" section containing variables for the following:
 
-       ansible_connection type should be set to "network_cli"
-       ansible_python_interpreter should be set to "~/VENV/py3_venv/bin/python"
-       ansible_user and ansible_ssh_pass should be set to the course's standard values
-   
+       - ansible_connection type should be set to "network_cli"
+       - ansible_python_interpreter should be set to "~/VENV/py3_venv/bin/python"
+       - ansible_user and ansible_ssh_pass should be set to the course's standard values
+
    Additionally, add the following three groups to the inventory file:
    
        local
        cisco
        arista
-   
+ 
    Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your inventory file, your output should look similar to the following:
    
        {
@@ -105,7 +105,6 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
       l---local:
       l
       l---ungrouped:
-
 
    c. Modify your inventory file to set the "ansible_network_os" for the cisco and arista groups to "ios" and "eos" respectively. Additionally, set the "ansible_host" for each of these hosts to the fqdn of the device (i.e. cisco1.lasthop.io, arista1.lasthop.io, etc.). Use the ansible-inventory --list -i ./inventory.ini command to inspect the inventory and validate that the network_os has been set appropriately. Additionally, add "localhost" to be a member of the "local" group (you will need to set ansible_connection=local for the localhost entry).
 
