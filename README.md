@@ -42,13 +42,13 @@ Note: YAML files allow you to use whatever amount of spacing you wish for indent
 Note: YAML linters are available and can be useful in helping to make sure you are writing valid YAML. yamllint is a Python utility for checking YAML files for a few common "issues" such as duplicate dictionary keys, line length, and most importantly indentation issues. You can use this or websites such as yamllint.com to check your YAML files.
 
 
-1.
-  a. Create a YAML file that is a five element list (in expanded YAML format).
+1. YAML Data Structures
+   a. Create a YAML file that is a five element list (in expanded YAML format).
 
-In order to verify the contents of this YAML file (i.e. to print the data structure to stdout), use the Python script stored here. To run this python script you can 'git clone' this repository, or just copy/paste the contents of the script into a ".py" file on your system. Use the following command to run the script:
-
-python print_yaml.py MYFILE.yml
-
+   In order to verify the contents of this YAML file (i.e. to print the data structure to stdout), use the Python script stored here. To run this python script you can 'git clone' this repository, or just copy/paste the contents of the script into a ".py" file on your system. Use the following command to run the script:
+   
+   python print_yaml.py MYFILE.yml
+   
 
    b. Create a YAML file that is a five element list, but in a compressed YAML format. Once again, use the "print_yaml.py" python script to print the contents of the YAML file to stdout.
 
