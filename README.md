@@ -116,20 +116,20 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
 
    a. Create a Playbook that contains a single Ansible Play. Provide a "name" for this Play. Additionally, set the "hosts" for this Play to "localhost". Finally, create a task using the "debug" module. This task should print the "ansible_host" variable to stdout. Run this Playbook, your output should look similar to the following (use the inventory you created in exercise2c):
 
-    $ ansible-playbook exercise3a.yaml -i inventory.ini
-    
-    PLAY [Exercise 3a] *******************************************
-    
-    TASK [Gathering Facts] ***************************************
-    ok: [localhost]
-    
-    TASK [debug] *************************************************
-    ok: [localhost] => {
-        "ansible_host": "127.0.0.1"
-    }
-    
-    PLAY RECAP  **************************************************
-    localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+        $ ansible-playbook exercise3a.yaml -i inventory.ini
+        
+        PLAY [Exercise 3a] *******************************************
+        
+        TASK [Gathering Facts] ***************************************
+        ok: [localhost]
+        
+        TASK [debug] *************************************************
+        ok: [localhost] => {
+            "ansible_host": "127.0.0.1"
+        }
+        
+        PLAY RECAP  **************************************************
+        localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
 
    b. Modify the previously created Play such that the "Gathering Facts" task is no longer enabled. The "PLAY RECAP" should now indicate that only a single task was executed.
@@ -137,40 +137,40 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
 
    c. Add a second Play to the Playbook. This Play should operate against the "cisco" group, and should not gather facts. Within this Play create two tasks, the first task should use the debug module to print the "ansible_connection" variable. The second task should use the debug module to print the "ansible_host" variable. Your final output should be similar to the following:
 
-    $ ansible-playbook exercise3c.yaml -i inventory.ini
+        $ ansible-playbook exercise3c.yaml -i inventory.ini
+        
+        PLAY [Exercise 3a] ********************************************
+        
+        TASK [Gathering Facts] ****************************************
+        ok: [localhost]
+        
+        TASK [debug] **************************************************
+        ok: [localhost] => {
+            "ansible_host": "127.0.0.1"
+        }
+        
+        PLAY [Another Play] *******************************************
+        
+        TASK [debug] **************************************************
+        ok: [cisco1] => {
+            "ansible_connection": "network_cli"
+        }
+        ok: [cisco2] => {
+            "ansible_connection": "network_cli"
+        }
+        
+        TASK [debug] **************************************************
+        ok: [cisco1] => {
+            "ansible_host": "cisco1.lasthop.io"
+        }
+        ok: [cisco2] => {
+            "ansible_host": "cisco2.lasthop.io"
+        }
     
-    PLAY [Exercise 3a] ********************************************
-    
-    TASK [Gathering Facts] ****************************************
-    ok: [localhost]
-    
-    TASK [debug] **************************************************
-    ok: [localhost] => {
-        "ansible_host": "127.0.0.1"
-    }
-    
-    PLAY [Another Play] *******************************************
-    
-    TASK [debug] **************************************************
-    ok: [cisco1] => {
-        "ansible_connection": "network_cli"
-    }
-    ok: [cisco2] => {
-        "ansible_connection": "network_cli"
-    }
-    
-    TASK [debug] **************************************************
-    ok: [cisco1] => {
-        "ansible_host": "cisco1.lasthop.io"
-    }
-    ok: [cisco2] => {
-        "ansible_host": "cisco2.lasthop.io"
-    }
-
-    PLAY RECAP ****************************************************
-    cisco1: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
-    cisco2: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
-    localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+        PLAY RECAP ****************************************************
+        cisco1: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+        cisco2: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
+        localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
 --------------------------------------------------------------------------------
 
@@ -232,19 +232,19 @@ Inside the same ciscoX directory, create a second file named "bgp.yml". In this 
 
 Finally, modify your Playbook such that your output looks similar to the following. 
 
-   TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-   ok: [cisco2] => {
-       "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
-   }
-   ok: [cisco1] => {
-       "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
-   }
-   ok: [cisco6] => {
-       "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
-   }
-   ok: [cisco5] => {
-       "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
-   }
+       TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+       ok: [cisco2] => {
+           "msg": "The ASN for host cisco2 is 65001, the router-id is 2.2.2.2"
+       }
+       ok: [cisco1] => {
+           "msg": "The ASN for host cisco1 is 65001, the router-id is 1.1.1.1"
+       }
+       ok: [cisco6] => {
+           "msg": "The ASN for host cisco6 is 65001, the router-id is 6.6.6.6"
+       }
+       ok: [cisco5] => {
+           "msg": "The ASN for host cisco5 is 65535, the router-id is 5.5.5.5"
+       }
 
 The above exercise demonstrates that you can store additional inventory variables in host_vars, and group_vars. These subdirectories also allow you to divide your YAML into multiple files which can simplify inventory management.
 
@@ -269,31 +269,32 @@ The above exercise demonstrates that you can store additional inventory variable
 
    b. By using "stdout_lines", access and print out the "fxp0.0" interface information. You can potentially accomplish this by using the below pattern: 
 
-   "{{ interfaces['stdout_lines'][0][21] }}"
-   Note, it is possible that the index-number "21" might change.
+       "{{ interfaces['stdout_lines'][0][21] }}"
 
-Note2, there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
+   Note: it is possible that the index-number "21" might change.
+
+   Note2: there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
 
 Your output should look similar to the following (i.e. it should contain the devices IP address on the 172.30.0.0/24 network). 
 
-   TASK [debug] **********************************************
-   ok: [vmx1] => {
-       "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
-   }
-   ok: [vmx2] => {
-       "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
-   }
+       TASK [debug] **********************************************
+       ok: [vmx1] => {
+           "msg": "fxp0.0                  up    up   inet     172.30.0.221/24 "
+       }
+       ok: [vmx2] => {
+           "msg": "fxp0.0                  up    up   inet     172.30.0.156/24 "
+       }
 
    c. Now how would you extract only the "172.30.0.X/24" from that line? In other words, how would you print out only the following: 
 
-   TASK [debug] *****************************************************
-   ok: [vmx1] => {
-       "msg": "Primary IP: 172.30.0.221/24"
-   }
-   ok: [vmx2] => {
-       "msg": "Primary IP: 172.30.0.156/24"
-   }
-
+       TASK [debug] *****************************************************
+       ok: [vmx1] => {
+           "msg": "Primary IP: 172.30.0.221/24"
+       }
+       ok: [vmx2] => {
+           "msg": "Primary IP: 172.30.0.156/24"
+       }
+    
 Reminder, you can execute certain string methods inside Ansible (in a Jinja2 context). For example, you can do: "{{ my_var.split() }}"  to split the string on consecutive white space. This will return a list of words; you can then access the last element of this list by using [-1].
 
 
