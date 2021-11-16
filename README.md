@@ -37,9 +37,9 @@ This course dives into Ansible as applied to Network Engineering.
 
 ### Exercises:
 
-Note: YAML files allow you to use whatever amount of spacing you wish for indentation (as long as you are consistent). A general recommendation is to use two spaces for indentation for YAML files.
+***Note:*** YAML files allow you to use whatever amount of spacing you wish for indentation (as long as you are consistent). A general recommendation is to use two spaces for indentation for YAML files.
 
-Note: YAML linters are available and can be useful in helping to make sure you are writing valid YAML. yamllint is a Python utility for checking YAML files for a few common "issues" such as duplicate dictionary keys, line length, and most importantly indentation issues. You can use this or websites such as yamllint.com to check your YAML files.
+***Note:*** YAML linters are available and can be useful in helping to make sure you are writing valid YAML. yamllint is a Python utility for checking YAML files for a few common "issues" such as duplicate dictionary keys, line length, and most importantly indentation issues. You can use this or websites such as yamllint.com to check your YAML files.
 
 
 1. YAML Data Structures
@@ -223,7 +223,7 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
    b. Create a "host_vars" directory, and a subdirectory named "cisco5" within it. Inside this, "host_vars/cisco5", create a file named "bgp.yml". Inside this file, create a variable named "bgp_asn" using a different ASN value. Re-run the Playbook. You should observe that the host_vars "bgp_asn" has higher priority than the group_vars "bgp_asn" variable.
 
-   c. Create the following subdirectories: cisco1, cisco2, cisco6 (inside the host_vars directory). The "host_vars/cisco5" subdirectory should already exist. Note, the directory names must exactly match the Ansible "inventory_hostname". In each of these ciscoX directories create a file named "ip_addresses.yml". Inside this file create a "loopback0" variable and assign this variable a unique IPv4 address (for example, 1.1.1.1 for cisco1).
+   c. Create the following subdirectories: cisco1, cisco2, cisco6 (inside the host_vars directory). The "host_vars/cisco5" subdirectory should already exist. ***Note***, the directory names must exactly match the Ansible "inventory_hostname". In each of these ciscoX directories create a file named "ip_addresses.yml". Inside this file create a "loopback0" variable and assign this variable a unique IPv4 address (for example, 1.1.1.1 for cisco1).
 
    Inside the same ciscoX directory, create a second file named "bgp.yml". In this file create a variable "bgp_router_id" and assign it a value of the "loopback0" variable you just created (remember your  "{{ loopback0 }}" notation). The "cisco5" bgp.yml file should contain both the "bgp_asn" and the "bgp_router_id".
 
@@ -268,9 +268,9 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
        "{{ interfaces['stdout_lines'][0][21] }}"
 
-   Note: it is possible that the index-number "21" might change.
+   ***Note:*** it is possible that the index-number "21" might change.
 
-   Note2: there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
+   ***Note2:*** there are better patterns that can be used (instead of hard-coding a specific index). We will learn these patterns later in the course including using a loop and a conditional (or potentially using a string/regex pattern search).
 
    Your output should look similar to the following (i.e. it should contain the devices IP address on the 172.30.0.0/24 network). 
    
@@ -333,7 +333,7 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
    * For each of the above, register the output into a unique variable for example, show_ip_arp_eos.
    * Print out the registered output only for the EOS devices.
    
-   Note, you will be required to disable fact gathering for the Juniper device. There is an issue with the Juniper lab device and Ansible where fact gathering will fail.
+   ***Note***, you will be required to disable fact gathering for the Juniper device. There is an issue with the Juniper lab device and Ansible where fact gathering will fail.
 
    b. Expand on your playbook that you created in exercise1a. Add tags into your playbook such that you can execute only the "eos", "ios", or "junos" section of your playbook depending on which tag you provide. For example, if I provide the "eos" tag, then only the "eos" tasks should be run.
 
@@ -376,7 +376,7 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
            ]
        }
    
-   Note, there are other, better ways to solve problems similar to this. In particular, you can use parsers such as TextFSM and Cisco-Genie to accomplish the parsing for you. We will talk about these more later in the course.
+   ***Note***, there are other, better ways to solve problems similar to this. In particular, you can use parsers such as TextFSM and Cisco-Genie to accomplish the parsing for you. We will talk about these more later in the course.
 
 
 4. Using a single Jina2 template and an Ansible Playbook generate a configuration matching the following for each of the four Arista switches:
@@ -526,20 +526,20 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
 4. Use the eos_vlans resource module to create a VLAN and to assign the VLAN a name on all four of the Arista switches. The VLAN ID should be in the VLAN range from VLAN 200 to 299.
 
-   After this VLAN is created, then use the eos_l2_interfaces resource module to assign that VLAN to one of the interfaces on all four of the Arista switches. You should either Ethernet5, Ethernet6, or Ethernet7 (do NOT use Ethernet1). Your VLAN ID, VLAN name, and interface name should be stored in either host_vars or group_vars.
+   After this VLAN is created, then use the eos_l2_interfaces resource module to assign that VLAN to one of the interfaces on all four of the Arista switches. You should either Ethernet5, Ethernet6, or Ethernet7 (do ***NOT*** use Ethernet1). Your VLAN ID, VLAN name, and interface name should be stored in either host_vars or group_vars.
 
    Using eos_command and a show command(s), verify that your VLAN exists and that the Ethernet interface you chose was assigned to that interface (I used "show vlan | json"). This verification will probably require that you use an assert statements.
 
 
 5. Use the nxos_interfaces resource module to configure "Ethernet1/3" on both nxos1 and nxos2 as a layer2 port (i.e. configure "switchport" on that interface). If "Ethernet1/3" is being used by another student then use either "Ethernet1/1" or "Ethernet1/2" instead.
 
-   - Use the l2_interface module to configure the port for trunking ("switchport mode trunk). Note, this is the Ansible issue that requires us to use the deprecated feature module instead of using the newer resources module.
+   - Use the l2_interface module to configure the port for trunking ("switchport mode trunk). ***Note***, this is the Ansible issue that requires us to use the deprecated feature module instead of using the newer resources module.
 
    - Using the l2_interfaces resource module configure the trunk native VLAN to VLAN4. Yes, it is ugly to use both "l2_interface" and "l2_interfaces", but I wanted you to get more experience with the resource modules.
 
    - Using the nxos_command module execute a show command on the switches and capture that output. Use this output and the Ansible assert module to verify that the interface is trunking and that the native VLAN is correct. I used 'show interface {{ intf_name }} trunk | json' for my show command.
 
-   - The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should NOT be hard-coded into your Ansible playbook.
+   - The intf_name, intf_mode (layer2), switchport_mode (trunk), and the native_vlan should all be stored in host_vars/group_vars and should ***NOT*** be hard-coded into your Ansible playbook.
 
 --------------------------------------------------------------------------------
 
@@ -576,7 +576,7 @@ Once again, use the python "print_yaml.py" script to print the contents of the Y
 
 2. Repeat exercise1 except now use the "cli_config" module for all of the devices (instead of ios_config, eos_config, nxos_config, and junos_config). Once again your final playbook should be idempotent.
 
-   Note, I had to specify "ansible_connection: network_cli" for the Juniper vMXs as the cli_config module requires network_cli.
+   ***Note***, I had to specify "ansible_connection: network_cli" for the Juniper vMXs as the cli_config module requires network_cli.
 
 
 3. Using Hierarchy Argurments to Add and Re-Order ACL's
@@ -715,7 +715,7 @@ Now what happens when we convert this over to "include_tasks"?
 	    - name: Test tags
 	      include_tasks: subtask1.yml
 
-In this case the "include_tasks" statement is dynamic and the entire "Test tags" task is included or excluded based on whether we possess the tag or not. Consequently, if we execute our playbook as below, then the "include_tasks" statement in the main playbook will not execute (as it does NOT have the "test1" tag). In other words, the entire include_tasks operation will be skipped including all of the sub-tasks. 
+In this case the "include_tasks" statement is dynamic and the entire "Test tags" task is included or excluded based on whether we possess the tag or not. Consequently, if we execute our playbook as below, then the "include_tasks" statement in the main playbook will not execute (as it does ***NOT*** have the "test1" tag). In other words, the entire include_tasks operation will be skipped including all of the sub-tasks. 
 
 
 	$ ansible-playbook test1.yml --tags test1
@@ -834,113 +834,118 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
 ### Exercises:
 
-1. Using class5, exercise4 as a base solution, change this earlier exercise such that you do NOT hard-code the "bgp_peer_ip" in inventory. In other words, in our earlier solution, we had something similar to the following embedded in our inventory: 
+1. Using class5, exercise4 as a base solution, change this earlier exercise such that you do ***NOT*** hard-code the "bgp_peer_ip" in inventory. In other words, in our earlier solution, we had something similar to the following embedded in our inventory: 
 
-$ cat host_vars/nxos1/bgp.yml 
-bgp_peer_ip: 172.31.254.2
-Consequently, we hard-coded the "nxos2" BGP peer IP address in our inventory for nxos1 (and vice versa).
+       $ cat host_vars/nxos1/bgp.yml 
+       bgp_peer_ip: 172.31.254.2
 
-In this new solution, convert over and use "hostvars" instead. In other words, nxos1 should access the hostvars for "nxos2" and look up this BGP peer IP address which is defined in the nxos2 inventory (using hostvars).
+   Consequently, we hard-coded the "nxos2" BGP peer IP address in our inventory for nxos1 (and vice versa).
 
-If necessary, just use my earlier class5, exercise4 solution as the starting point for solving this problem.
+   In this new solution, convert over and use "hostvars" instead. In other words, nxos1 should access the hostvars for "nxos2" and look up this BGP peer IP address which is defined in the nxos2 inventory (using hostvars).
 
+   If necessary, just use my earlier class5, exercise4 solution as the starting point for solving this problem.
 
 2. See below:
 
-****
-Note, this block/rescue behavior and recovering the password is broken in the current version of Ansible. Consequently, you will need to skip this exercise or alternatively downgrade to ansible 3.3.0 and ansible-base 2.10.8
+   ***Note***, this block/rescue behavior and recovering the password is broken in the current version of Ansible. Consequently, you will need to skip this exercise or alternatively downgrade to ansible 3.3.0 and ansible-base 2.10.8
 
-See https://github.com/ansible-collections/ansible.netcommon/issues/133
-****
+   See:- https://github.com/ansible-collections/ansible.netcommon/issues/133
 
+   Using a "block" and a "rescue" statement execute "eos_config" and configure two DNS servers. For the block section, you should intentionally set an invalid password in the "eos_config" task such that your authentication will fail. You might need to use a section similar to the following to accomplish this: 
 
-Using a "block" and a "rescue" statement execute "eos_config" and configure two DNS servers. For the block section, you should intentionally set an invalid password in the "eos_config" task such that your authentication will fail. You might need to use a section similar to the following to accomplish this: 
+       - name: Attempt configuration using an invalid password
+         vars:
+           ansible_ssh_pass: "invalid"
+         eos_config:
+           # remaining lines for task
 
-- name: Attempt configuration using an invalid password
-  vars:
-    ansible_ssh_pass: "invalid"
-  eos_config:
-    # remaining lines for task
+   Then in the rescue section, you would need to set the password back to the correct value. For this task, you should use an environment variable so you don't hard-code the lab password in the playbook. 
 
-Then in the rescue section, you would need to set the password back to the correct value. For this task, you should use an environment variable so you don't hard-code the lab password in the playbook. 
+      vars:
+        # Use environment variable to avoid hard-coded passwd
+        ansible_ssh_pass: "{{lookup('env','ANSIBLE_PASSWORD')}}"
 
-  vars:
-    # Use environment variable to avoid hard-coded passwd
-    ansible_ssh_pass: "{{lookup('env','ANSIBLE_PASSWORD')}}"
-
-The rescue section of the playbooks should properly configure the two DNS servers using "eos_config". Consequently, the general pattern for this playbook will be--the block section will fail authentication and then the rescue section will retry this operation and should succeed.
+   The rescue section of the playbooks should properly configure the two DNS servers using "eos_config". Consequently, the general pattern for this playbook will be--the block section will fail authentication and then the rescue section will retry this operation and should succeed.
 
 
-3a. Exercise1 of this lesson should create a valid BGP session between nxos1 and nxos2. Additionally, each router should be exchanging announcing two BGP prefixes. Use the "show ip bgp summary" command, the nxos_command module, a TextFSM template (the ntc-template, "cisco_nxos_show_ip_bgp_summary.template"), and Ansible's parse_cli_textfsm filter to extract structured BGP information.
+3. Use TextFSM to Parse Output to Structured Data
 
-From this structured data, add an ansible "assert" statement that checks for the following: 
-•	The "STATE_PFXRCD" field should not contain "Shut" (short for Shutdown).
-•	The "STATE_PFXRCD" field should not contain "Idle" (BGP has been configured, but not transitioned to the established state).
-•	The "STATE_PFXRCD" field should have at least two BGP prefixes.
-This process will return an empty list if BGP has not been configured.
+   a. Exercise1 of this lesson should create a valid BGP session between nxos1 and nxos2. Additionally, each router should be exchanging announcing two BGP prefixes. Use the "show ip bgp summary" command, the nxos_command module, a TextFSM template (the ntc-template, "cisco_nxos_show_ip_bgp_summary.template"), and Ansible's parse_cli_textfsm filter to extract structured BGP information.
 
-3b. Using the ntc-templates index file, and ntc_parse, retrieve the output of "show vlan" (as structured data) from the four Arista devices. You will likely need to define the following three variables to accomplish this: 
+   From this structured data, add an ansible "assert" statement that checks for the following: 
 
-  vars:
-    platform: "arista_eos"
-    command: "show vlan"
-    # where {{ username }} is the name of your lab user
-    textfsm_index: "/home/{{ username }}/ntc-templates/ntc_templates/templates/"
-Display your returned data structure to standard output.
+       - The "STATE_PFXRCD" field should not contain "Shut" (short for Shutdown).
+       - The "STATE_PFXRCD" field should not contain "Idle" (BGP has been configured, but not transitioned to the established state).
+       - The "STATE_PFXRCD" field should have at least two BGP prefixes.
 
+   This process will return an empty list if BGP has not been configured.
 
-4a. Using genie and the "clay584.genie" collection execute "show interface" on the two NX-OS switches. Use the "parse_genie" filter to convert this output to structured data.
+   b. Using the ntc-templates index file, and ntc_parse, retrieve the output of "show vlan" (as structured data) from the four Arista devices. You will likely need to define the following three variables to accomplish this: 
 
-Print the returned data structure to standard out using "debug" and verify that this data structure is in fact structured data (instead of a string).
+      vars:
+        platform: "arista_eos"
+        command: "show vlan"
+        # where {{ username }} is the name of your lab user
+        textfsm_index: "/home/{{ username }}/ntc-templates/ntc_templates/templates/"
 
-4b. Repeat the same pattern as exercise4a except this time execute "show version". From this output extract the software version and print it to the screen.
+   Display your returned data structure to standard output.
 
+4. Use Genie to Parse Output to Structured Data 
 
-5a. Execute "show lldp neighbors" on both of the NX-OS devices. Use regular expressions and the regex_findall() filter to extract the following: remote_name, local_interface, remote_interface.
+   a. Using genie and the "clay584.genie" collection execute "show interface" on the two NX-OS switches. Use the "parse_genie" filter to convert this output to structured data.
 
-Print these three fields out the the screen using a data structure (a list or a dictionary for the outermost data structure).
+   Print the returned data structure to standard out using "debug" and verify that this data structure is in fact structured data (instead of a string).
 
-5b. Use regex_search and "show version" to extract the software version from each of the Arista devices. Display this software version to standard output. Note, you could also solve this problem on the Arista's using pipe JSON, but here the explicit purpose is to use regular expressions.
+   b. Repeat the same pattern as exercise4a except this time execute "show version". From this output extract the software version and print it to the screen.
+
+5. 
+
+   a. Execute "show lldp neighbors" on both of the NX-OS devices. Use regular expressions and the regex_findall() filter to extract the following: remote_name, local_interface, remote_interface.
+
+   Print these three fields out the the screen using a data structure (a list or a dictionary for the outermost data structure).
+
+   b. Use regex_search and "show version" to extract the software version from each of the Arista devices. Display this software version to standard output. ***Note***, you could also solve this problem on the Arista's using pipe JSON, but here the explicit purpose is to use regular expressions.
 
 
 6. [Optional - requires Python] - Expand the dynamic inventory script located here such that all the devices located in Ansible inventory (~/ansible-hosts.ini) are included in the dynamic inventory script. You should just hard code the device definitions inside the script such that they get outputted properly as JSON (i.e. hard-code them in the script using Python data structures).
 
-Ensure your script works properly when executed as follows: 
+   Ensure your script works properly when executed as follows: 
 
-$ ./your_inv_script.py --list
-# Where "nxos1" is some host in inventory
-$ ./your_inv_script.py --host nxos1
-In a real dynamic  inventory scenario, you would be pulling the device and group information from external systems via APIs; converting to the proper data structure(s), and then outputting these data structures in JSON. Consequently, in this exercise, we are only really doing the last part of this (the proper output in JSON format so Ansible can ingest the inventory information).
+       $ ./your_inv_script.py --list
+       # Where "nxos1" is some host in inventory
+       $ ./your_inv_script.py --host nxos1
 
-When your script is done, the output of "ansible-inventory --graph -i ./your_inv_script.py" should look as follows: 
+   In a real dynamic  inventory scenario, you would be pulling the device and group information from external systems via APIs; converting to the proper data structure(s), and then outputting these data structures in JSON. Consequently, in this exercise, we are only really doing the last part of this (the proper output in JSON format so Ansible can ingest the inventory information).
+
+   When your script is done, the output of "ansible-inventory --graph -i ./your_inv_script.py" should look as follows: 
 
    $ ansible-inventory --graph -i ./dyn_inv.py 
 
-   all:
-     l---arista:
-     l  l--arista5
-     l  l--arista6
-     l  l--arista7
-     l  l--arista8
-     l
-     l---cisco:
-     l  l--cisco1
-     l  l--cisco2
-     l  l--cisco5
-     l  l--cisco6
-     l
-     l---juniper:
-     l  l--vmx1
-     l  l--vmx2
-     l
-     l---local:
-     l  l--localhost
-     l
-     l---nxos:
-     l  l--nxos1
-     l  l--nxos2
-     l
-     l--@ungrouped:
+       all:
+         l---arista:
+         l  l--arista5
+         l  l--arista6
+         l  l--arista7
+         l  l--arista8
+         l
+         l---cisco:
+         l  l--cisco1
+         l  l--cisco2
+         l  l--cisco5
+         l  l--cisco6
+         l
+         l---juniper:
+         l  l--vmx1
+         l  l--vmx2
+         l
+         l---local:
+         l  l--localhost
+         l
+         l---nxos:
+         l  l--nxos1
+         l  l--nxos2
+         l
+         l--@ungrouped:
 
 --------------------------------------------------------------------------------
 
@@ -965,13 +970,13 @@ When your script is done, the output of "ansible-inventory --graph -i ./your_inv
 
 1. Use TextFSM and the below ntc-template to retrieve "show lldp neighbors" from the two NX-OS switches:
 
-cisco_nxos_show_lldp_neighbors.template
+   cisco_nxos_show_lldp_neighbors.template
 
-Convert the data structure returned via TextFSM from a list of lists to a dictionary.
+   Convert the data structure returned via TextFSM from a list of lists to a dictionary.
 
-The new dictionary format should be: the keys are the local interface name and the corresponding value is the remote device name.
+   The new dictionary format should be: the keys are the local interface name and the corresponding value is the remote device name.
 
-Inside Ansible, you should use a loop and the "combine" filter to accomplish this task. You should print your final data structure to the screen as part of your playbook. Your final data structure should look similar to the following (this is only showing nxos1): 
+   Inside Ansible, you should use a loop and the "combine" filter to accomplish this task. You should print your final data structure to the screen as part of your playbook. Your final data structure should look similar to the following (this is only showing nxos1): 
 
     "lldp_map": {
         "Eth1/1": "nxos2.lasthop.io",
@@ -980,7 +985,7 @@ Inside Ansible, you should use a loop and the "combine" filter to accomplish thi
         "Eth1/4": "nxos2.lasthop.io"
     }
 
-2. Create a custom Ansible inventory for the Arista devices that does NOT contain either the ansible_user or the ansible_ssh_pass.
+2. Create a custom Ansible inventory for the Arista devices that does ***NOT*** contain either the ansible_user or the ansible_ssh_pass.
 
 Create an Ansible playbook. In this playbook, create variables for both 'ansible_ssh_pass' and for 'ansible_user'. The 'ansible_ssh_pass' variable should be set using a "lookup" and the ANSIBLE_PASSWORD environment variable (this environment variable should already be set in the lab environment). In other words, you should not hard-code the password in the playbook; instead you should be reading it from the referenced environment variable.
 
@@ -1015,7 +1020,7 @@ b. Uses Ansible set filters to determine the common VLANs that are configured on
 c. Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
 d. Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
 
-Note, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
+***Note***, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
 
 6. Exercise6 contains a set of playbooks (exercise6a.yml through exercise6g.yml). For reference, see the exercise directory here.
 
@@ -1023,7 +1028,7 @@ Each of these playbooks will fail (i.e. not execute properly). You should "git c
 
 Your job for each of these playbooks is to find and correct the error in each playbook. 
 
-In general, the playbook should only contain one error. Note, the error may or may not result in an actual Ansible execution failure (i.e. ansible-playbook detecting the task as failed and stopping execution). Or worded differently, a couple of the playbooks execute successfully from an Ansible perspective, but do not do what they are supposed to do.
+In general, the playbook should only contain one error. ***Note***, the error may or may not result in an actual Ansible execution failure (i.e. ansible-playbook detecting the task as failed and stopping execution). Or worded differently, a couple of the playbooks execute successfully from an Ansible perspective, but do not do what they are supposed to do.
 
 You should try to fix each one of these playbooks on your own.
 
@@ -1113,7 +1118,7 @@ Your playbook should automatically create the "BUP" sub-directory and the "BUP/{
 
 2. Use napalm_get_facts and the "get_lldp_neighbors()" method (filter: lldp_neighbors) to retrieve the LLDP neighbors from all of the Arista and Cisco IOS/IOS-XE devices.
 
-Reformat the retrieved data to print out the following table to standard output (in a somewhat readable way). Note, you might need to use the "stdout_callback = debug" to accomplish this (i.e. to make the output somewhat readable): 
+Reformat the retrieved data to print out the following table to standard output (in a somewhat readable way). ***Note***, you might need to use the "stdout_callback = debug" to accomplish this (i.e. to make the output somewhat readable): 
 
 ********* LLDP table for (cisco6) ********
 GigabitEthernet2: cisco5
@@ -1175,7 +1180,7 @@ All of the relevant VLAN IDs and VLAN names should be stored in group_vars. All 
 
 Use napalm-ansible and the "napalm_install_config" module (merge-operation) to deploy this configuration to the "arista5" switch. Validate your configuration changes before committing them by generating and reviewing a "diff" file of the pending changes.
 
-Do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
+Do ***NOT*** change the Ethernet1 interface as this interface is needed for management access to the device.
 
 
 4. Repeat the BGP configuration exercise from class7, exercise1 using napalm-ansible.
@@ -1195,7 +1200,7 @@ In order to accomplish this, you should use Ansible to retrieve the running conf
 
 Once again all of your new VLAN IDs and VLAN names should be stored in group_vars. Similarly, the interfaces to VLAN ID mappings should also be stored in group_vars.
 
-Note, do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
+***Note***, do NOT change the Ethernet1 interface as this interface is needed for management access to the device.
 
 At the end of the templating process, you should be generating an entire configuration that you can deploy to Arista5.
 
