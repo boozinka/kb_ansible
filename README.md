@@ -1016,10 +1016,10 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
    In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
 
-       - Uses the nxos_command module to execute "show vlan | json" and records this output.
-       - Uses Ansible set filters to determine the common VLANs that are configured on both nxos1 and nxos2. Print these common VLANs to standard output.
-       - Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
-       - Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
+   - Uses the nxos_command module to execute "show vlan | json" and records this output.
+   - Uses Ansible set filters to determine the common VLANs that are configured on both nxos1 and nxos2. Print these common VLANs to standard output.
+   - Uses Ansible set filters to determine the unique VLANs that are only configured on nxos1. Print these to standard output.
+   - Uses Ansible set filters to determine the unique VLANS that are only configured on nxos2. Print these to standard output.
 
    ***Note***, you will probably need to use "hostvars" to accomplish this exercise. In other words, when executing on nxos1, you will need to reference the VLANs configured on nxos2 using hostvars['nxos2']...
 
