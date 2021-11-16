@@ -43,6 +43,7 @@ Note: YAML linters are available and can be useful in helping to make sure you a
 
 
 1. YAML Data Structures
+
    a. Create a YAML file that is a five element list (in expanded YAML format).
 
    In order to verify the contents of this YAML file (i.e. to print the data structure to stdout), use the Python script stored here. To run this python script you can 'git clone' this repository, or just copy/paste the contents of the script into a ".py" file on your system. Use the following command to run the script:
