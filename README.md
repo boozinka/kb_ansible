@@ -1003,16 +1003,16 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 5. Configure the following VLANs on nxos1 and nxos2 (use the nxos_vlans module to accomplish this): 
 
        nxos1
-       \\- vlan_id: 100
-         name: blue100
-       \\- vlan_id: 101
-         name: blue101
+         - vlan_id: 100
+           name: blue100
+         - vlan_id: 101
+           name: blue101
        
        nxos2
-       \\- vlan_id: 200
-         name: blue200
-       \\- vlan_id: 201
-         name: blue201
+         - vlan_id: 200
+           name: blue200
+         - vlan_id: 201
+           name: blue201
 
    In the same playbook, after the VLANs have been configured, create a new play (or new tasks) that does the following:
 
