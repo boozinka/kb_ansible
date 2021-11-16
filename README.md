@@ -61,7 +61,9 @@ Note: YAML linters are available and can be useful in helping to make sure you a
 Once again, use the python "print_yaml.py" script to print the contents of the YAML file to stdout.
 
 
-2. (a) Create an "INI" style inventory file. This file should have an "all:vars" section containing variables for the following:
+2. Inventory Files
+
+   a. Create an "INI" style inventory file. This file should have an "all:vars" section containing variables for the following:
 
     ansible_connection type should be set to "network_cli"
     ansible_python_interpreter should be set to "~/VENV/py3_venv/bin/python"
@@ -90,27 +92,29 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
     }
 
 
-2. (b) Add two hosts to the arista and cisco groups and re-inspect the inventory using ansible-inventory --list -i ./inventory.ini. Additionally, use the --graph option. This option provides a more compressed view of your inventory. Your --graph output should look similar to the following:
+   b. Add two hosts to the arista and cisco groups and re-inspect the inventory using ansible-inventory --list -i ./inventory.ini. Additionally, use the --graph option. This option provides a more compressed view of your inventory. Your --graph output should look similar to the following:
 
-    all:
-     |---arista:
-     |  |--arista5
-     |  |--arista6
-     |
-     |---cisco:
-     |  |--cisco1
-     |  |--cisco2
-     |
-     |---local:
-     |
-     |---ungrouped:
-
-
-
-2. (c) Modify your inventory file to set the "ansible_network_os" for the cisco and arista groups to "ios" and "eos" respectively. Additionally, set the "ansible_host" for each of these hosts to the fqdn of the device (i.e. cisco1.lasthop.io, arista1.lasthop.io, etc.). Use the ansible-inventory --list -i ./inventory.ini command to inspect the inventory and validate that the network_os has been set appropriately. Additionally, add "localhost" to be a member of the "local" group (you will need to set ansible_connection=local for the localhost entry).
+     all:
+     \|---arista:
+     \|  \|--arista5
+     \|  \|--arista6
+     \|
+     \|---cisco:
+     \|  \|--cisco1
+     \|  \|--cisco2
+     \|
+     \|---local:
+     \|
+     \|---ungrouped:
 
 
-3. (a) Create a Playbook that contains a single Ansible Play. Provide a "name" for this Play. Additionally, set the "hosts" for this Play to "localhost". Finally, create a task using the "debug" module. This task should print the "ansible_host" variable to stdout. Run this Playbook, your output should look similar to the following (use the inventory you created in exercise2c):
+
+   c. Modify your inventory file to set the "ansible_network_os" for the cisco and arista groups to "ios" and "eos" respectively. Additionally, set the "ansible_host" for each of these hosts to the fqdn of the device (i.e. cisco1.lasthop.io, arista1.lasthop.io, etc.). Use the ansible-inventory --list -i ./inventory.ini command to inspect the inventory and validate that the network_os has been set appropriately. Additionally, add "localhost" to be a member of the "local" group (you will need to set ansible_connection=local for the localhost entry).
+
+
+3. Simple Playbooks
+
+   a. Create a Playbook that contains a single Ansible Play. Provide a "name" for this Play. Additionally, set the "hosts" for this Play to "localhost". Finally, create a task using the "debug" module. This task should print the "ansible_host" variable to stdout. Run this Playbook, your output should look similar to the following (use the inventory you created in exercise2c):
 
     $ ansible-playbook exercise3a.yaml -i inventory.ini
     
@@ -128,10 +132,10 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
     localhost: ok=2 changed=0 failed=0 skipped=0 rescued=0 ignored=0
 
 
-3. (b) Modify the previously created Play such that the "Gathering Facts" task is no longer enabled. The "PLAY RECAP" should now indicate that only a single task was executed.
+   b. Modify the previously created Play such that the "Gathering Facts" task is no longer enabled. The "PLAY RECAP" should now indicate that only a single task was executed.
 
 
-3. (c) Add a second Play to the Playbook. This Play should operate against the "cisco" group, and should not gather facts. Within this Play create two tasks, the first task should use the debug module to print the "ansible_connection" variable. The second task should use the debug module to print the "ansible_host" variable. Your final output should be similar to the following:
+   c. Add a second Play to the Playbook. This Play should operate against the "cisco" group, and should not gather facts. Within this Play create two tasks, the first task should use the debug module to print the "ansible_connection" variable. The second task should use the debug module to print the "ansible_host" variable. Your final output should be similar to the following:
 
     $ ansible-playbook exercise3c.yaml -i inventory.ini
     
