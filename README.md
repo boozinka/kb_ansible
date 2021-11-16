@@ -210,19 +210,19 @@ Use the ansible-inventory --list -i ./inventory.ini to validate and inspect your
 
    a. Create a new directory that includes a Playbook and a "group_vars" directory. The group_vars directory should contain a "cisco" subdirectory. Inside this "group_vars/cisco" subdirectory, create a file named "bgp.yml". Inside this "bgp.yml" file create a variable for "bgp_asn" and assign it a value between 65000 and 65535. Use the "debug" module to print a message to stdout. The message should look similar to the following: 
 
-   TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
-   ok: [cisco1] => {
-       "msg": "The ASN for host cisco1 is 65001"
-   }
-   ok: [cisco5] => {
-       "msg": "The ASN for host cisco5 is 65001"
-   }
-   ok: [cisco2] => {
-       "msg": "The ASN for host cisco2 is 65001"
-   }
-   ok: [cisco6] => {
-       "msg": "The ASN for host cisco6 is 65001"
-   }
+        TASK [Print BGP ASN for cisco hosts] **************************************************************************************************
+        ok: [cisco1] => {
+            "msg": "The ASN for host cisco1 is 65001"
+        }
+        ok: [cisco5] => {
+            "msg": "The ASN for host cisco5 is 65001"
+        }
+        ok: [cisco2] => {
+            "msg": "The ASN for host cisco2 is 65001"
+        }
+        ok: [cisco6] => {
+            "msg": "The ASN for host cisco6 is 65001"
+        }
 
    b. Create a "host_vars" directory, and a subdirectory named "cisco5" within it. Inside this, "host_vars/cisco5", create a file named "bgp.yml". Inside this file, create a variable named "bgp_asn" using a different ASN value. Re-run the Playbook. You should observe that the host_vars "bgp_asn" has higher priority than the group_vars "bgp_asn" variable.
 
