@@ -1,0 +1,26 @@
+---
+- name: Bonus Lesson 2.2 - Complex 'filter_plugin' to parse output
+  hosts: arista
+  gather_facts: False
+  tasks:
+
+    - name: Issue the "show ip arp" command and register the varible
+      arista.eos.eos_command:
+        commands:
+          - sh ip arp
+      register: sh_ip_arp
+
+    - name: Print the varible "sh_ip_arp"
+      ansible.builtin.debug: 
+        var: sh_ip_arp
+
+    - name: Use custom filter to parse 'sh ip arp' and extract list of macs
+      ansible.builtin.set_fact:
+        arp_list: "{{ sh_ip_arp.stdout[0] | parse_arp }}"
+
+    - name: Print the list of macs for each device to stdout
+      ansible.builtin.debug: 
+        msg: |
+          "Mac addresses on {{ inventory_hostname }} are:"
+          "{{ arp_list }}" 
+
