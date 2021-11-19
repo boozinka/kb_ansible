@@ -15,4 +15,4 @@
 
     - ansible.builtin.debug:
         msg: "{{ show_ip | show_ip_filter }}"
-
+ 
