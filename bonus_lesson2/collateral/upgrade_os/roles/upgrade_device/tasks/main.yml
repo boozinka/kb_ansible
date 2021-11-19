@@ -5,4 +5,4 @@
 - name: Reload the device
   ansible.builtin.import_tasks: reload_device.yml
   tags: reload
-
+  

@@ -18,4 +18,4 @@
         dest: "bootflash:/{{ os_image_file }}"
         protocol: scp
       when: ansible_facts.net_model == "C1111-4P"
-
+ 

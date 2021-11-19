@@ -24,4 +24,4 @@ backup_image:
 
 # Extra buffer of available space
 extra_space: 10000000
-
+ 

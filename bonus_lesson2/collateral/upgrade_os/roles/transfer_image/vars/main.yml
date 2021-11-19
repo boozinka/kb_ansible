@@ -5,4 +5,4 @@ image_details:
   # Sanity check to make sure never using wrong image on the wrong model
   supported_models:
     - "C1111-4P"
-
+ 

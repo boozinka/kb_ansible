@@ -38,4 +38,4 @@
       ansible.builtin.assert:
         that:
           - available_space | int > image_size + extra_space
-
+ 

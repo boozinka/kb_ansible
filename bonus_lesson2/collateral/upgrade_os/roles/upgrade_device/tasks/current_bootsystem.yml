@@ -10,4 +10,4 @@
 - name: Display the current boot section
   ansible.builtin.debug:
     var: boot_var
-
+ 

@@ -11,4 +11,4 @@
     dest: "{{ dest_filesystem }}/{{ primary_image.name }}"
     protocol: scp
   when: ansible_facts.net_model == "C1111-4P"
-
+ 
