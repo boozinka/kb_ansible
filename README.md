@@ -1215,7 +1215,7 @@ You can see in the output that the debug task with the "test1" tag did in fact e
 
 --------------------------------------------------------------------------------
 
-## Bonus Lesson 2. - OS Upgrade, Creating yourown Filter and Module
+## Bonus Lesson 2. - OS Upgrade, Creating your own Filters and Modules
 
 
  - [ ] I.    OS Upgrade Overview
