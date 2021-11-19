@@ -1,0 +1,12 @@
+---
+- hosts: local
+  tasks:
+    - ansible.builtin.debug:
+        msg: "{{ 'Converts To Upper Case' | filter1 }}"
+    
+    - ansible.builtin.debug:
+        msg: "{{ 'Converts To Lower Case' | filter2 }}"
+    
+    - ansible.builtin.debug:
+        msg: "{{ 'capitalises the string' | filter3 }}"
+
