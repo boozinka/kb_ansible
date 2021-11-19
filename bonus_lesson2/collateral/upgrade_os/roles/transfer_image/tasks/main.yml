@@ -1,0 +1,14 @@
+- name: Determine file-system to use.
+  ansible.builtin.import_tasks: determine_filesystem.yml
+
+- name: Verify sufficient space available on remote device.
+  ansible.builtin.import_tasks: verify_space_available.yml
+
+- name: Transfer the image file.
+  ansible.builtin.import_tasks: transfer_image.yml
+  tags: never
+
+- name: Verify the remote files MD5
+  ansible.builtin.import_tasks: verify_file.yml
+  tags: md5
+

@@ -1,0 +1,56 @@
+- name: Obtain 'boot system' values (after changes)
+  ansible.builtin.import_tasks: current_bootsystem.yml
+
+- name: Verify file exists and display its size
+  cisco.ios.ios_command:
+    commands: "dir {{ primary_image.name }}"
+  register: dir_output
+
+- ansible.builtin.set_fact:
+    dir_output: "{{ dir_output.stdout_lines[0] }}"
+
+- name: Perform MD5 (returns 'md5_hash' variable)
+  ansible.builtin.import_role:
+    name: file_operations
+    tasks_from: md5
+
+- name: Just the facts
+  ansible.builtin.debug:
+    msg:
+      - '******************************************************'
+      - 'File Exists: {{ dir_output[2] }}'
+      - ''
+      - 'MD5 Value: {{ md5_hash }}'
+      - ''
+      - 'Boot Variable: '
+      - '-------'
+      - '{{ boot_var }}'
+      - ''
+      - '******************************************************'
+
+- name: Prompt to continue
+  ansible.builtin.pause:
+    prompt: |
+      >>>>>>>>>>>>>>>>>>
+      You are about to reload the device!!! Do you want to continue?
+      Press "<cntr-c>" and then "a" to abort.
+      Press return to continue.
+      >>>>>>>>>>>>>>>>>>
+- name: Reload the device.
+  cisco.ios.ios_command:
+    commands:
+      - command: reload
+        prompt: confirm
+        answer: 'y'
+  tags: 
+    - reload_only
+
+- name: Wait until device completes its reboot
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: 22
+    delay: 240
+    timeout: 1800
+  tags: 
+    - reload_only
+

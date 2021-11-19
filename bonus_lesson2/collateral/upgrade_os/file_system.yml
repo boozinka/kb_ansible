@@ -1,0 +1,41 @@
+---
+- name: Test various file transfer and verification steps
+  hosts: cisco1
+  vars:
+    allowed_filesystems:
+      - "flash:"
+      - "bootflash:"
+    # Artificially small since testing against "cisco1"
+    image_size: 10000000
+    extra_space: 10000000
+  gather_facts: True
+
+  tasks:
+    - name: Set the destination file_system to use for file-transfer
+      ansible.builtin.set_fact:
+        dest_filesystem: "{{ ansible_facts.net_filesystems[0] }}"
+
+    - ansible.builtin.debug:
+        var: dest_filesystem
+
+    - name: Verify file_system is an allowed file-system
+      ansible.builtin.assert:
+        that:
+          - dest_filesystem in allowed_filesystems
+
+    - name: Verify sufficient space for the image
+      ansible.builtin.set_fact:
+        available_space_kb: "{{ ansible_facts.net_filesystems_info[dest_filesystem]['spacefree_kb'] }}"
+
+    - name: Convert to Bytes
+      ansible.builtin.set_fact:
+        available_space: "{{ available_space_kb | int * 1024 }}"
+
+    - ansible.builtin.debug:
+        var: available_space
+
+    - name: Verify space available
+      ansible.builtin.assert:
+        that:
+          - available_space | int > image_size + extra_space
+
