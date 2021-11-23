@@ -1,0 +1,14 @@
+---
+- name: Testing a simple custome module
+  hosts: local
+  tasks:
+    - name: Test new module
+      simple_custom_module:
+        my_str: 'convert to upper case'
+      register: output
+
+    - name: Print output to stdout
+      ansible.builtin.debug:
+        var: output
+
+ 
