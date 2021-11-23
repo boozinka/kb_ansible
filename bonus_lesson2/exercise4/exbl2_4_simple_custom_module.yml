@@ -5,10 +5,10 @@
     - name: Test new module
       simple_custom_module:
         my_str: 'convert to upper case'
-      register: output
+      register: return_value
 
     - name: Print output to stdout
       ansible.builtin.debug:
-        var: output
+        var: return_value
 
  
