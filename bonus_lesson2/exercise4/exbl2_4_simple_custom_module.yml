@@ -1,5 +1,5 @@
 ---
-- name: Testing a simple custome module
+- name: Bonus Lesson 2.4 - Testing a simple custom module
   hosts: local
   tasks:
     - name: Test new module
