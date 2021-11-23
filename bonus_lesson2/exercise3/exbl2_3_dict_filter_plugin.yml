@@ -1,0 +1,26 @@
+---
+- name: Bonus Lesson 2.3 - 'filter_plugin' to parse output & create data structure
+  hosts: cisco 
+  gather_facts: False
+  tasks:
+
+    - name: Issue the "show ip arp" command and register the varible
+      cisco.ios.ios_command:
+        commands:
+          - show ip arp
+      register: sh_ip_arp
+
+    - name: Print the varible "sh_ip_arp"
+      ansible.builtin.debug: 
+        var: sh_ip_arp
+
+    - name: Use custom filter to parse 'sh ip arp' and return a dictionary
+      ansible.builtin.set_fact:
+        arp_dict: "{{ sh_ip_arp.stdout[0] | parse_arp_dict }}"
+
+    - name: Print the dictionary with IP address as key and mac as value
+      ansible.builtin.debug: 
+        msg: |
+          "IP/MAC pairings on {{ inventory_hostname }} are:"
+          "{{ arp_dict }}" 
+
